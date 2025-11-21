@@ -20,9 +20,12 @@
     "start": "nodemon index.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "morgan": "^1.10.1",
     "nodemon": "^3.1.11",
     "pg": "^8.16.3",
