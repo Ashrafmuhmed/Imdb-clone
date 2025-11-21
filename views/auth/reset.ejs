@@ -1,0 +1,46 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: pageTitle || 'IMDB Clone - Reset Password'
+}) %>
+    <link rel="stylesheet" href="/css/reset.css">
+</head>
+<body>
+    <div class="container">
+        <% if(valid) { %>
+            <h2>Reset Your Password</h2>
+            <p class="info-text">Please enter your new password below.</p>
+            
+            <form id="resetForm" action="/reset/<%= token %>" method="POST">
+                <input type="password" name="password" id="password" placeholder="New Password" required minlength="6">
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm New Password" required minlength="6">
+                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                
+                <button type="submit">Reset Password</button>
+                <div class="error" id="errorMessage"></div>
+            </form>
+            
+            <% if (typeof error !== 'undefined' && valid) { %>
+                <div class="error" style="display: block; margin-top: 15px;"><%= error %></div>
+            <% } %>
+        <% } else { %>
+            <h2>Invalid Reset Link</h2>
+            <div class="error">
+                <% if (typeof error !== 'undefined') { %>
+                    <%= error %>
+                <% } else { %>
+                    This reset link is invalid or has expired.
+                <% } %>
+            </div>
+            <p style="margin-top: 20px;">
+                <a href="/reset">Request a new password reset</a>
+            </p>
+            <p>
+                <a href="/login">Back to Login</a>
+            </p>
+        <% } %>
+    </div>
+
+    <% if(valid) { %>
+        <script src="/js/reset.js"></script>
+    <% } %>
+<%- include('../includes/end.ejs') %>
+

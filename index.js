@@ -3,11 +3,16 @@ const express = require("express");
 const morgan = require("morgan");
 const logger = require("./utils/logger");
 
-const testRoute = require("./routes/test.route");
 const sequelize = require("./utils/database");
 const session = require("express-session");
 const sessionStore = require("connect-pg-simple")(session);
 const { Pool } = require("pg");
+const path = require("path");
+const csurf = require('csurf');
+
+const authRoutes = require("./routes/auth.router");
+
+const csurfProtection = csurf() ; 
 
 const pgPool = new Pool({
   user: process.env.DB_USER,
@@ -41,12 +46,23 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 app.use(sessionMiddleware);
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(csurfProtection); 
 app.use(loggerMiddleware);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req,res,next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use(authRoutes);
 
 sequelize
-  .sync({alter: true})
+  .sync({ alter: true })
   .then(() => {
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
