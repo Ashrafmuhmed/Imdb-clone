@@ -31,7 +31,7 @@ const Titles = sequelize.define(
     },
     endYear: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     runtimeMinutes: {
       type: DataTypes.INTEGER,
@@ -47,18 +47,14 @@ const Titles = sequelize.define(
     },
   },
   {
-    tableName: "titles",
+    tableName: "Titles",
+    freezeTableName: true,
     timestamps: false,
     indexes: [
-      {
-        fields: ["tconst"],
-      },
-      {
-        fields: ["primaryTitle"],
-      },
-      {
-        fields: ["OriginalTitle"],
-      },
+      { fields: ["primaryTitle"] },
+      { fields: ["OriginalTitle"] },
+      { fields: ["Ttype"] },
+      { fields: ["primaryTitle", "Ttype"] },
     ],
   }
 );

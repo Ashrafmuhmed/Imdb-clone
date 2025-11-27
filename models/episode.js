@@ -9,6 +9,14 @@ const Episode = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
+    tconst: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "Titles",
+        key: "tconst",
+      },
+    },
     seasonNumber: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -19,13 +27,10 @@ const Episode = sequelize.define(
     },
   },
   {
-    tableName: "episodes",
+    tableName: "Episodes",
+    freezeTableName: true,
     timestamps: false,
-    indexes: [
-      {
-        fields: ["econst"],
-      },
-    ],
+    indexes: [{ fields: ["tconst"] }, { fields: ["seasonNumber"] }],
   }
 );
 

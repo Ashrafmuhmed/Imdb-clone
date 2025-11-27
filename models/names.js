@@ -17,10 +17,11 @@ const Names = sequelize.define('names' , {
     },
     deathYear: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
-    tableName: 'names',
+    tableName: 'Names',
+    freezeTableName: true,
     timestamps: false,
     indexes: [
         {

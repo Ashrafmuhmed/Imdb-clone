@@ -8,11 +8,14 @@ const session = require("express-session");
 const sessionStore = require("connect-pg-simple")(session);
 const { Pool } = require("pg");
 const path = require("path");
-const csurf = require('csurf');
+const csurf = require("csurf");
 
 const authRoutes = require("./routes/auth.router");
+const seedTestData = require("./seeders/imdb-test-data");
+const csurfProtection = csurf();
 
-const csurfProtection = csurf() ; 
+const defineAssociations = require("./models/associations");
+defineAssociations();
 
 const pgPool = new Pool({
   user: process.env.DB_USER,
@@ -25,7 +28,7 @@ const pgPool = new Pool({
 const sessionMiddleware = session({
   store: new sessionStore({
     pool: pgPool,
-    tableName: "sessions",
+    tableName: "Sessions",
     createTableIfMissing: true,
   }),
   secret: process.env.SESSION_SECRET,
@@ -48,7 +51,7 @@ const PORT = process.env.PORT || 3000;
 app.use(sessionMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(csurfProtection); 
+app.use(csurfProtection);
 app.use(loggerMiddleware);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -62,7 +65,10 @@ app.use((req,res,next) => {
 app.use(authRoutes);
 
 sequelize
-  .sync({ alter: true })
+  .sync({ force: true })
+  .then(() => {
+    return seedTestData();
+  })
   .then(() => {
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
