@@ -2,7 +2,7 @@ const sequelize = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
 const Genres = sequelize.define(
-  "Genres",
+  "genres",
   {
     tconst: {
       type: DataTypes.STRING,

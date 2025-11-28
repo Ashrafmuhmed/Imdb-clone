@@ -12,20 +12,10 @@ const Watchlist = sequelize.define(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: "Users",
-        key: "userId",
-      },
-      onDelete: "CASCADE",
     },
     tconst: {
       type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "Titles",
-        key: "tconst",
-      },
-      onDelete: "CASCADE",
     },
     DateAdded: {
       type: DataTypes.DATE,

@@ -7,7 +7,6 @@ const DirectedBy = require("./directedBy");
 const WrittenBy = require("./writtenBy");
 const Genres = require("./genres");
 const Profession = require("./profession");
-const KnownFor = require("./knownFor");
 
 function defineAssociations() {
   // Names <-> Titles - done
@@ -15,11 +14,13 @@ function defineAssociations() {
     through: DirectedBy,
     foreignKey: "nconst",
     otherKey: "tconst",
+    as: "directedTitles",
   });
   Titles.belongsToMany(Names, {
     through: DirectedBy,
     foreignKey: "tconst",
     otherKey: "nconst",
+    as: "directors",
   });
 
   // Names <-> Titles - done
@@ -27,11 +28,13 @@ function defineAssociations() {
     through: WrittenBy,
     foreignKey: "nconst",
     otherKey: "tconst",
+    as: "writtenTitles",
   });
   Titles.belongsToMany(Names, {
     through: WrittenBy,
     foreignKey: "tconst",
     otherKey: "nconst",
+    as: "writers",
   });
 
   // Titles <-> Episode - done
@@ -73,14 +76,6 @@ function defineAssociations() {
     foreignKey: "nconst",
   });
 
-  // Names <-> KnownFor - done
-  Names.hasMany(KnownFor, {
-    foreignKey: "nconst",
-    onDelete: "CASCADE",
-  });
-  KnownFor.belongsTo(Names, {
-    foreignKey: "nconst",
-  });
 }
 
 module.exports = defineAssociations;

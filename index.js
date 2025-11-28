@@ -11,9 +11,12 @@ const path = require("path");
 const csurf = require("csurf");
 
 const authRoutes = require("./routes/auth.router");
+const namesRoutes = require("./routes/names.router");
+
 const seedTestData = require("./seeders/imdb-test-data");
 const csurfProtection = csurf();
 
+const isAuth = require('./middleware/isauth.middleware');
 const defineAssociations = require("./models/associations");
 defineAssociations();
 
@@ -63,9 +66,10 @@ app.use((req,res,next) => {
 });
 
 app.use(authRoutes);
+app.use( isAuth , namesRoutes )
 
 sequelize
-  .sync({ force: true })
+  .sync({ alter: true })
   .then(() => {
     return seedTestData();
   })

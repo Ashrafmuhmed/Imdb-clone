@@ -2,7 +2,7 @@ const sequelize = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
 const DirectedBy = sequelize.define(
-  "DirectedBy",
+  "directedby",
   {
     tconst: {
       type: DataTypes.STRING,

@@ -12,10 +12,6 @@ const Episode = sequelize.define(
     tconst: {
       type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "Titles",
-        key: "tconst",
-      },
     },
     seasonNumber: {
       type: DataTypes.INTEGER,

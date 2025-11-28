@@ -19,6 +19,11 @@ const Names = sequelize.define('names' , {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
+    knownFor : {
+        type: DataTypes.STRING,
+        allowNull : true,
+        defaultValue: '',
+    }
 }, {
     tableName: 'Names',
     freezeTableName: true,

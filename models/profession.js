@@ -2,7 +2,7 @@ const sequelize = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
 const profession = sequelize.define(
-  "Profession",
+  "profession",
   {
     nconst: {
       type: DataTypes.STRING,

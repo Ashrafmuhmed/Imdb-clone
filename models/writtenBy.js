@@ -2,7 +2,7 @@ const sequelize = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
 const WrittenBy = sequelize.define(
-  "WrittenBy",
+  "writtenby",
   {
     tconst: {
       type: DataTypes.STRING,
