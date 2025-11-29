@@ -224,3 +224,12 @@ exports.postResetPassword = (req, res, next) => {
       next(err);
     });
 };
+
+exports.postLogout = (req, res, next) => {
+  req.session
+    .destroy()
+    .then((_) => {
+      res.redirect("/");
+    })
+    .catch((err) => next(err));
+};
