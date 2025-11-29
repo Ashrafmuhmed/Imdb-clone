@@ -62,7 +62,7 @@ exports.getName = (req, res, next) => {
             },
           },
         }).then((knownForTitles) => {
-          res.status(STATUS_CODE.OK).render("name/detail", {
+          res.status(STATUS_CODE.OK).render("names/detail", {
             name: name,
             professions: name.professions || [],
             knownFor: knownForTitles || [],
