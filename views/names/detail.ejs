@@ -69,14 +69,13 @@
                     <% directedTitles.forEach(title => { %>
                     <div class="title-card">
                         <a href="/titles/<%= title.tconst %>" class="title-link">
-                            <div class="title-poster">
-                                <div class="title-placeholder">🎬</div>
-                                <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
-                            </div>
                             <div class="title-info">
-                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-header">
+                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                </div>
                                 <p class="title-meta">
-                                    Rating: <%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %>
+                                    <%= title.startYear %>
                                 </p>
                             </div>
                         </a>
@@ -93,14 +92,13 @@
                     <% writtenTitles.forEach(title => { %>
                     <div class="title-card">
                         <a href="/titles/<%= title.tconst %>" class="title-link">
-                            <div class="title-poster">
-                                <div class="title-placeholder">🎬</div>
-                                <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
-                            </div>
                             <div class="title-info">
-                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-header">
+                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                </div>
                                 <p class="title-meta">
-                                    Rating: <%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %>
+                                    <%= title.startYear %>
                                 </p>
                             </div>
                         </a>

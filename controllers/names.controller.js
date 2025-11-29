@@ -37,12 +37,12 @@ exports.getName = (req, res, next) => {
       {
         model: Titles,
         as: "writtenTitles",
-        attributes: ["tconst", "primaryTitle", "averageRating"],
+        attributes: ["tconst", "primaryTitle", "averageRating","startYear"],
       },
       {
         model: Titles,
         as: "directedTitles",
-        attributes: ["tconst", "primaryTitle", "averageRating"],
+        attributes: ["tconst", "primaryTitle", "averageRating" , "startYear","endYear","startYear"],
       },
     ],
   }).then((name) => {
