@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'People - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="names-list-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>People</h1>
+            <p class="page-subtitle">Browse actors, directors, writers, and more</p>
+        </div>
+
+        <div class="names-grid">
+            <% if (typeof names !== 'undefined' && names.length > 0) { %>
+                <% names.forEach(name => { %>
+                <div class="name-card">
+                    <a href="/names/<%= name.nconst %>" class="name-link">
+                        <div class="name-info">
+                            <h3 class="name-title"><%= name.name %></h3>
+                            <p class="name-meta">
+                                Born: <%= name.birthYear %><% if (name.deathYear) { %> • Died: <%= name.deathYear %><% } %>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-results">
+                    <p>No people found.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+        <div class="pagination">
+            <% if (typeof currentPage !== 'undefined' && currentPage > 1) { %>
+                <a href="?pg=<%= currentPage - 1 %>" class="pagination-btn">Previous</a>
+            <% } %>
+            
+            <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                <a href="?pg=<%= i %>" class="pagination-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+            
+            <% if (typeof currentPage !== 'undefined' && currentPage < totalPages) { %>
+                <a href="?pg=<%= currentPage + 1 %>" class="pagination-btn">Next</a>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>
+

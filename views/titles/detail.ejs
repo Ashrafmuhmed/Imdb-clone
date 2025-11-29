@@ -1,0 +1,195 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: (typeof title !== 'undefined' ? title.primaryTitle : 'Title') + ' - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="title-detail-container">
+    <div class="container">
+        <% if (typeof title !== 'undefined') { %>
+        <div class="title-detail-header">
+            <div class="title-detail-info">
+                <h1 class="title-detail-name"><%= title.primaryTitle %></h1>
+                <% if (title.OriginalTitle !== title.primaryTitle) { %>
+                    <p class="title-original"><%= title.OriginalTitle %></p>
+                <% } %>
+                
+                <div class="title-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Rating:</span>
+                        <span class="stat-value rating-highlight"><%= title.averageRating.toFixed(1) %> ⭐</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Votes:</span>
+                        <span class="stat-value"><%= title.numVotes.toLocaleString() %></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Type:</span>
+                        <span class="stat-value"><%= title.Ttype %></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Year:</span>
+                        <span class="stat-value"><%= title.startYear %><% if (title.endYear) { %> - <%= title.endYear %><% } %></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Runtime:</span>
+                        <span class="stat-value"><%= title.runtimeMinutes %> minutes</span>
+                    </div>
+                </div>
+
+                <% if (typeof genres !== 'undefined' && genres.length > 0) { %>
+                <div class="title-genres">
+                    <% genres.forEach(genre => { %>
+                        <span class="genre-tag"><%= genre.genres %></span>
+                    <% }); %>
+                </div>
+                <% } %>
+
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <div class="title-actions">
+                    <form action="/watchlist/add" method="POST" class="watchlist-form">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <input type="hidden" name="tconst" value="<%= title.tconst %>">
+                        <button type="submit" class="watchlist-btn">+ Add to Watchlist</button>
+                    </form>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="title-detail-content">
+            <% if (typeof directors !== 'undefined' && directors.length > 0) { %>
+            <section class="detail-section">
+                <h2>Directors</h2>
+                <div class="people-list">
+                    <% directors.forEach(director => { %>
+                    <a href="/names/<%= director.nconst %>" class="person-card">
+                        <div class="person-name"><%= director.name %></div>
+                    </a>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+
+            <% if (typeof writers !== 'undefined' && writers.length > 0) { %>
+            <section class="detail-section">
+                <h2>Writers</h2>
+                <div class="people-list">
+                    <% writers.forEach(writer => { %>
+                    <a href="/names/<%= writer.nconst %>" class="person-card">
+                        <div class="person-name"><%= writer.name %></div>
+                    </a>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+
+            <% if (typeof principals !== 'undefined' && principals.length > 0) { %>
+            <section class="detail-section">
+                <h2>Cast & Crew</h2>
+                <div class="principals-list">
+                    <% 
+                    // Group principals by category
+                    const groupedPrincipals = {};
+                    principals.forEach(p => {
+                        const cat = p.category || 'other';
+                        if (!groupedPrincipals[cat]) {
+                            groupedPrincipals[cat] = [];
+                        }
+                        groupedPrincipals[cat].push(p);
+                    });
+                    %>
+                    <% Object.keys(groupedPrincipals).forEach(category => { %>
+                        <div class="principals-category">
+                            <h3 class="category-title"><%= category.charAt(0).toUpperCase() + category.slice(1) %></h3>
+                            <div class="principals-items">
+                                <% groupedPrincipals[category].forEach(principal => { %>
+                                <div class="principal-item">
+                                    <div class="principal-card">
+                                        <div class="principal-header">
+                                            <a href="/names/<%= principal.nconst %>" class="principal-name-link">
+                                                <div class="principal-name"><%= principal.name && principal.name.name ? principal.name.name : 'Unknown' %></div>
+                                            </a>
+                                            <% if (principal.name && principal.name.birthYear) { %>
+                                                <div class="principal-birth">
+                                                    <span class="info-icon">📅</span>
+                                                    Born: <%= principal.name.birthYear %><% if (principal.name.deathYear) { %> • Died: <%= principal.name.deathYear %><% } %>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        
+                                        <% if (principal.name && principal.name.professions && principal.name.professions.length > 0) { %>
+                                        <div class="principal-professions">
+                                            <span class="info-label">Professions:</span>
+                                            <div class="professions-tags">
+                                                <% principal.name.professions.forEach(prof => { %>
+                                                    <span class="profession-badge"><%= prof.profession %></span>
+                                                <% }); %>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                                        
+                                        <% if (principal.characters && principal.characters !== '\\N' && principal.characters !== null) { %>
+                                            <div class="principal-character">
+                                                <span class="info-icon">🎭</span>
+                                                <span class="character-label">Character:</span>
+                                                <span class="character-name"><%= principal.characters %></span>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <% if (principal.job && principal.job !== '\\N' && principal.job !== null) { %>
+                                            <div class="principal-job">
+                                                <span class="info-icon">💼</span>
+                                                <span class="job-label">Job:</span>
+                                                <span class="job-name"><%= principal.job %></span>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <a href="/names/<%= principal.nconst %>" class="principal-view-profile">
+                                            View Full Profile →
+                                        </a>
+                                    </div>
+                                </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+
+            <% if (typeof episodes !== 'undefined' && episodes.length > 0) { %>
+            <section class="detail-section">
+                <h2>Episodes</h2>
+                <div class="episodes-list">
+                    <% episodes.forEach(episode => { %>
+                    <div class="episode-card">
+                        <div class="episode-header">
+                            <div class="episode-number">S<%= episode.seasonNumber %>E<%= episode.episodeNumber %></div>
+                            <div class="episode-info">
+                                <h3>Episode <%= episode.episodeNumber %></h3>
+                                <p class="episode-season">Season <%= episode.seasonNumber %></p>
+                            </div>
+                        </div>
+                        <!-- <div class="episode-details">
+                            <a href="/titles/<%= episode.tconst %>" class="episode-link">View Episode Details →</a>
+                        </div> -->
+                    </div>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+        </div>
+        <% } else { %>
+            <div class="error-message">
+                <h2>Title not found</h2>
+                <p>The title you're looking for doesn't exist.</p>
+                <a href="/titles" class="back-link">Browse Titles</a>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>
+

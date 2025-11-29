@@ -1,0 +1,79 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'Movies & TV Shows - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="titles-list-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>Movies & TV Shows</h1>
+            <div class="filters">
+                <form method="GET" action="/titles" class="filter-form">
+                    <select name="type" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="movie" <%= typeof type !== 'undefined' && type === 'movie' ? 'selected' : '' %>>Movies</option>
+                        <option value="tvSeries" <%= typeof type !== 'undefined' && type === 'tvSeries' ? 'selected' : '' %>>TV Series</option>
+                        <option value="tvMovie" <%= typeof type !== 'undefined' && type === 'tvMovie' ? 'selected' : '' %>>TV Movies</option>
+                        <option value="short" <%= typeof type !== 'undefined' && type === 'short' ? 'selected' : '' %>>Shorts</option>
+                    </select>
+                    <select name="sort" class="filter-select">
+                        <option value="rating" <%= typeof sort !== 'undefined' && sort === 'rating' ? 'selected' : '' %>>Highest Rated</option>
+                        <option value="newest" <%= typeof sort !== 'undefined' && sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                        <option value="oldest" <%= typeof sort !== 'undefined' && sort === 'oldest' ? 'selected' : '' %>>Oldest</option>
+                        <option value="votes" <%= typeof sort !== 'undefined' && sort === 'votes' ? 'selected' : '' %>>Most Votes</option>
+                    </select>
+                    <button type="submit" class="filter-btn">Apply Filters</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="titles-grid">
+            <% if (typeof titles !== 'undefined' && titles.length > 0) { %>
+                <% titles.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.startYear %><% if (title.endYear) { %> - <%= title.endYear %><% } %> • 
+                                <%= title.runtimeMinutes %> min • 
+                                <%= title.Ttype %>
+                            </p>
+                            <p class="title-votes"><%= title.numVotes.toLocaleString() %> votes</p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-results">
+                    <p>No titles found. Try adjusting your filters.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+        <div class="pagination">
+            <% if (typeof currentPage !== 'undefined' && currentPage > 1) { %>
+                <a href="?pg=<%= currentPage - 1 %><% if (typeof type !== 'undefined' && type) { %>&type=<%= type %><% } %><% if (typeof sort !== 'undefined' && sort) { %>&sort=<%= sort %><% } %>" class="pagination-btn">Previous</a>
+            <% } %>
+            
+            <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                <a href="?pg=<%= i %><% if (typeof type !== 'undefined' && type) { %>&type=<%= type %><% } %><% if (typeof sort !== 'undefined' && sort) { %>&sort=<%= sort %><% } %>" 
+                   class="pagination-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+            
+            <% if (typeof currentPage !== 'undefined' && currentPage < totalPages) { %>
+                <a href="?pg=<%= currentPage + 1 %><% if (typeof type !== 'undefined' && type) { %>&type=<%= type %><% } %><% if (typeof sort !== 'undefined' && sort) { %>&sort=<%= sort %><% } %>" class="pagination-btn">Next</a>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>
+

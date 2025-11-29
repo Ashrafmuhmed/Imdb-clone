@@ -1,7 +1,10 @@
-<%- include('../includes/head.ejs') %>
+<%- include('../includes/head.ejs', {
+    pageTitle: login ? 'IMDB Clone - Login' : 'IMDB Clone - Reset Password',
+    showNav: false
+}) %>
     <link rel="stylesheet" href="/css/login.css">
 </head>
-<body>
+<body class="auth-page">
     <div class="container">
         <% if(login) { %>
         <h2>Welcome Back</h2>

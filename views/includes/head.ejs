@@ -3,5 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle %></title>
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'IMDB Clone' %></title>
     <link rel="stylesheet" href="/css/main.css">
+    <% if (typeof additionalCSS !== 'undefined') { %>
+        <% additionalCSS.forEach(css => { %>
+            <link rel="stylesheet" href="<%= css %>">
+        <% }); %>
+    <% } %>
+</head>
+<body>
+    <% if (typeof showNav !== 'undefined' && showNav !== false) { %>
+        <%- include('nav.ejs', { 
+            isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+            user: typeof user !== 'undefined' ? user : null,
+            query: typeof query !== 'undefined' ? query : ''
+        }) %>
+    <% } %>

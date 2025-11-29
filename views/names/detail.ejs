@@ -1,0 +1,124 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: (typeof name !== 'undefined' ? name.name : 'Person') + ' - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="name-detail-container">
+    <div class="container">
+        <% if (typeof name !== 'undefined') { %>
+        <div class="name-detail-header">
+            <div class="name-detail-info">
+                <h1 class="name-detail-title"><%= name.name %></h1>
+                
+                <div class="name-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Born:</span>
+                        <span class="stat-value"><%= name.birthYear %></span>
+                    </div>
+                    <% if (name.deathYear) { %>
+                    <div class="stat-item">
+                        <span class="stat-label">Died:</span>
+                        <span class="stat-value"><%= name.deathYear %></span>
+                    </div>
+                    <% } %>
+                </div>
+
+                <% if (typeof professions !== 'undefined' && professions.length > 0) { %>
+                <div class="name-professions">
+                    <h3>Professions</h3>
+                    <div class="professions-list">
+                        <% professions.forEach(prof => { %>
+                            <span class="profession-tag"><%= prof.profession %></span>
+                        <% }); %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="name-detail-content">
+            <% if (typeof knownFor !== 'undefined' && knownFor.length > 0) { %>
+            <section class="detail-section">
+                <h2>Known For</h2>
+                <div class="titles-grid">
+                    <% knownFor.forEach(title => { %>
+                    <div class="title-card">
+                        <a href="/titles/<%= title.tconst %>" class="title-link">
+                            <div class="title-info">
+                                <div class="title-header">
+                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                </div>
+                                <p class="title-meta">
+                                    <%= title.runtimeMinutes %> min
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+
+            <% if (typeof directedTitles !== 'undefined' && directedTitles.length > 0) { %>
+            <section class="detail-section">
+                <h2>Directed</h2>
+                <div class="titles-grid">
+                    <% directedTitles.forEach(title => { %>
+                    <div class="title-card">
+                        <a href="/titles/<%= title.tconst %>" class="title-link">
+                            <div class="title-poster">
+                                <div class="title-placeholder">🎬</div>
+                                <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                            </div>
+                            <div class="title-info">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <p class="title-meta">
+                                    Rating: <%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %>
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+
+            <% if (typeof writtenTitles !== 'undefined' && writtenTitles.length > 0) { %>
+            <section class="detail-section">
+                <h2>Written</h2>
+                <div class="titles-grid">
+                    <% writtenTitles.forEach(title => { %>
+                    <div class="title-card">
+                        <a href="/titles/<%= title.tconst %>" class="title-link">
+                            <div class="title-poster">
+                                <div class="title-placeholder">🎬</div>
+                                <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                            </div>
+                            <div class="title-info">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <p class="title-meta">
+                                    Rating: <%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %>
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                    <% }); %>
+                </div>
+            </section>
+            <% } %>
+        </div>
+        <% } else { %>
+            <div class="error-message">
+                <h2>Person not found</h2>
+                <p>The person you're looking for doesn't exist.</p>
+                <a href="/names" class="back-link">Browse People</a>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>
+

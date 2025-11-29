@@ -1,2 +1,7 @@
+    <% if (typeof additionalJS !== 'undefined') { %>
+        <% additionalJS.forEach(js => { %>
+            <script src="<%= js %>"></script>
+        <% }); %>
+    <% } %>
 </body>
 </html>

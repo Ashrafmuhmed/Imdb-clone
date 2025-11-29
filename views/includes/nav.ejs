@@ -1,0 +1,33 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a href="/">IMDB Clone</a>
+        </div>
+        
+        <div class="nav-search">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Search movies, TV shows, people..." value="<%= typeof query !== 'undefined' ? query : '' %>" class="search-input">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+        </div>
+
+        <div class="nav-links">
+            <a href="/titles" class="nav-link">Movies & TV</a>
+            <a href="/names" class="nav-link">People</a>
+            <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <a href="/watchlist" class="nav-link">Watchlist</a>
+                <div class="nav-user">
+                    <span class="user-name"><%= user.username %></span>
+                    <form action="/logout" method="POST" style="display: inline;">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </div>
+            <% } else { %>
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/register" class="nav-link nav-btn">Sign Up</a>
+            <% } %>
+        </div>
+    </div>
+</nav>
+

@@ -1,0 +1,97 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'Search Results - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null,
+    query: typeof query !== 'undefined' ? query : ''
+}) %>
+
+<main class="search-results-container">
+    <div class="container">
+        <div class="search-header">
+            <h1>Search Results</h1>
+            <p class="search-query">Results for: "<%= typeof query !== 'undefined' ? query : '' %>"</p>
+        </div>
+
+        <div class="search-filters">
+            <form method="GET" action="/search" class="filter-form">
+                <input type="hidden" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>">
+                
+                <select name="type" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="movie" <%= typeof filters !== 'undefined' && filters.type === 'movie' ? 'selected' : '' %>>Movies</option>
+                    <option value="tvSeries" <%= typeof filters !== 'undefined' && filters.type === 'tvSeries' ? 'selected' : '' %>>TV Series</option>
+                    <option value="tvMovie" <%= typeof filters !== 'undefined' && filters.type === 'tvMovie' ? 'selected' : '' %>>TV Movies</option>
+                    <option value="short" <%= typeof filters !== 'undefined' && filters.type === 'short' ? 'selected' : '' %>>Shorts</option>
+                </select>
+
+                <input type="number" name="year" placeholder="Year" class="filter-input" 
+                       value="<%= typeof filters !== 'undefined' && filters.year ? filters.year : '' %>" 
+                       min="1900" max="2030">
+
+                <select name="genre" class="filter-select">
+                    <option value="">All Genres</option>
+                    <% if (typeof genres !== 'undefined' && genres.length > 0) { %>
+                        <% genres.forEach(g => { %>
+                            <option value="<%= g %>" <%= typeof filters !== 'undefined' && filters.genre === g ? 'selected' : '' %>><%= g %></option>
+                        <% }); %>
+                    <% } %>
+                </select>
+
+                <button type="submit" class="filter-btn">Apply Filters</button>
+            </form>
+        </div>
+
+        <% if (typeof titles !== 'undefined' && titles.length > 0) { %>
+        <section class="search-section">
+            <h2 class="section-title">Titles (<%= titles.length %>)</h2>
+            <div class="titles-grid">
+                <% titles.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.startYear %> • <%= title.runtimeMinutes %> min • <%= title.Ttype %>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+        <% if (typeof names !== 'undefined' && names.length > 0) { %>
+        <section class="search-section">
+            <h2 class="section-title">People (<%= names.length %>)</h2>
+            <div class="names-grid">
+                <% names.forEach(name => { %>
+                <div class="name-card">
+                    <a href="/names/<%= name.nconst %>" class="name-link">
+                        <div class="name-info">
+                            <h3 class="name-title"><%= name.name %></h3>
+                            <p class="name-meta">
+                                Born: <%= name.birthYear %><% if (name.deathYear) { %> • Died: <%= name.deathYear %><% } %>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+        <% if ((typeof titles === 'undefined' || titles.length === 0) && (typeof names === 'undefined' || names.length === 0)) { %>
+        <div class="no-results">
+            <p>No results found for "<%= typeof query !== 'undefined' ? query : '' %>"</p>
+            <p>Try searching with different keywords or adjusting filters.</p>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>

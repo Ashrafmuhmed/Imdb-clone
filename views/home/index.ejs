@@ -1,0 +1,79 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'IMDB Clone - Home',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="home-container">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to IMDB Clone</h1>
+            <p class="hero-subtitle">Discover movies, TV shows, and celebrities</p>
+            <div class="hero-search">
+                <form action="/search" method="GET" class="hero-search-form">
+                    <input type="text" name="q" placeholder="Search for movies, shows, or people..." class="hero-search-input">
+                    <button type="submit" class="hero-search-btn">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title">Browse by Category</h2>
+            <div class="category-grid">
+                <a href="/titles?type=movie" class="category-card">
+                    <div class="category-icon">🎬</div>
+                    <h3>Movies</h3>
+                    <p>Explore thousands of movies</p>
+                </a>
+                <a href="/titles?type=tvSeries" class="category-card">
+                    <div class="category-icon">📺</div>
+                    <h3>TV Series</h3>
+                    <p>Discover TV shows and series</p>
+                </a>
+                <a href="/names" class="category-card">
+                    <div class="category-icon">⭐</div>
+                    <h3>Celebrities</h3>
+                    <p>Browse actors, directors, and more</p>
+                </a>
+                <a href="/titles?sort=rating" class="category-card">
+                    <div class="category-icon">🏆</div>
+                    <h3>Top Rated</h3>
+                    <p>Highest rated titles</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <% if (typeof title !== 'undefined' && title.length > 0) { %>
+    <section class="featured-titles">
+        <div class="container">
+            <h2 class="section-title">Featured Titles</h2>
+            <div class="titles-grid">
+                <% title.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.startYear %> • 
+                                <%= title.runtimeMinutes %> min • 
+                                <%= title.Ttype %>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+</main>
+
+<%- include('../includes/end.ejs') %>
+

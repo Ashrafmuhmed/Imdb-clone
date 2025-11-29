@@ -1,9 +1,10 @@
 <%- include('../includes/head.ejs', {
-    pageTitle: pageTitle || 'IMDB Clone - Reset Password'
+    pageTitle: pageTitle || 'IMDB Clone - Reset Password',
+    showNav: false
 }) %>
     <link rel="stylesheet" href="/css/reset.css">
 </head>
-<body>
+<body class="auth-page">
     <div class="container">
         <% if(valid) { %>
             <h2>Reset Your Password</h2>

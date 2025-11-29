@@ -1,0 +1,48 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'My Watchlist - IMDB Clone',
+    showNav: true,
+    isLoggedIn: true,
+    user: typeof user !== 'undefined' ? user : null
+}) %>
+
+<main class="watchlist-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>My Watchlist</h1>
+            <p class="page-subtitle">Your saved titles</p>
+        </div>
+
+        <% if (typeof watchlist !== 'undefined' && watchlist.length > 0) { %>
+        <div class="titles-grid">
+            <% watchlist.forEach(title => { %>
+            <div class="title-card">
+                <a href="/titles/<%= title.tconst %>" class="title-link">
+                    <div class="title-info">
+                        <div class="title-header">
+                            <h3 class="title-name"><%= title.primaryTitle %></h3>
+                            <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                        </div>
+                        <p class="title-meta">
+                            <%= title.startYear %> • <%= title.runtimeMinutes %> min
+                        </p>
+                    </div>
+                </a>
+                <form action="/watchlist/remove" method="POST" class="remove-form">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                    <input type="hidden" name="tconst" value="<%= title.tconst %>">
+                    <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <div class="empty-watchlist">
+            <p>Your watchlist is empty.</p>
+            <a href="/titles" class="browse-link">Browse Titles</a>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>
+
