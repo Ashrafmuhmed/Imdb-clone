@@ -111,24 +111,8 @@
                                             <a href="/names/<%= principal.nconst %>" class="principal-name-link">
                                                 <div class="principal-name"><%= principal.name && principal.name.name ? principal.name.name : 'Unknown' %></div>
                                             </a>
-                                            <% if (principal.name && principal.name.birthYear) { %>
-                                                <div class="principal-birth">
-                                                    <span class="info-icon">📅</span>
-                                                    Born: <%= principal.name.birthYear %><% if (principal.name.deathYear) { %> • Died: <%= principal.name.deathYear %><% } %>
-                                                </div>
-                                            <% } %>
                                         </div>
                                         
-                                        <% if (principal.name && principal.name.professions && principal.name.professions.length > 0) { %>
-                                        <div class="principal-professions">
-                                            <span class="info-label">Professions:</span>
-                                            <div class="professions-tags">
-                                                <% principal.name.professions.forEach(prof => { %>
-                                                    <span class="profession-badge"><%= prof.profession %></span>
-                                                <% }); %>
-                                            </div>
-                                        </div>
-                                        <% } %>
                                         
                                         <% if (principal.characters && principal.characters !== '\\N' && principal.characters !== null) { %>
                                             <div class="principal-character">
@@ -172,9 +156,9 @@
                                 <p class="episode-season">Season <%= episode.seasonNumber %></p>
                             </div>
                         </div>
-                        <!-- <div class="episode-details">
+                        <div class="episode-details">
                             <a href="/titles/<%= episode.tconst %>" class="episode-link">View Episode Details →</a>
-                        </div> -->
+                        </div>
                     </div>
                     <% }); %>
                 </div>

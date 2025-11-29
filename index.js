@@ -12,7 +12,7 @@ const csurf = require("csurf");
 
 const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
-const TitlesRoutes = require("./routes/titles.router");
+const titlesRoutes = require("./routes/titles.router");
 
 const titlesController = require("./controllers/titles.controller");
 
