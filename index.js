@@ -14,6 +14,7 @@ const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
 const titlesRoutes = require("./routes/titles.router");
 const searchRoutes = require("./routes/search.router");
+const watchlistRoutes = require("./routes/watchlist.router");
 
 const titlesController = require("./controllers/titles.controller");
 
@@ -66,11 +67,12 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req,res,next) => {
-  User.findByPk(req.session.userId).then(
+  User.findByPk(req.session.user.id).then(
     user => {
       if( !user ){
         return next() ;
       }
+      console.log("User loaded from session:", user);
       req.user = user ;
       next() ;
     } )
@@ -86,7 +88,8 @@ app.use((req,res,next) => {
 app.use(authRoutes);
 app.use( isAuth , namesRoutes );
 app.use( isAuth , titlesRoutes );
-app.use( isAuth , searchRoutes)
+app.use( isAuth , searchRoutes);
+app.use( isAuth , watchlistRoutes );
 app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize

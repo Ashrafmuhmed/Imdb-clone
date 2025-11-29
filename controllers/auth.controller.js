@@ -32,9 +32,7 @@ exports.postRegister = (req, res, next) => {
         password: hashedPassword,
       }).then((user) => {
         logger.info(`New user registered email : ${email}`);
-        return res.status(STATUS_CODE.CREATED).json({
-          message: "You are registered now, login!",
-        });
+        return res.redirect('/login');
       });
     });
   });
@@ -78,9 +76,7 @@ exports.postLogin = (req, res, next) => {
         req.session.isLoggedIn = true;
         req.session.user = user;
         logger.info(`User logged in: ${email}`);
-        return res.status(STATUS_CODE.OK).json({
-          message: "Login successful",
-        });
+        return res.redirect('/');
       });
     })
     .catch((err) => {

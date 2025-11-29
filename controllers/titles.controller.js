@@ -9,7 +9,7 @@ const Genres = require("../models/genres");
 
 exports.getHomePage = (req, res, next) => {
   Titles.findAll({
-    limit: 10,
+    limit: 12,
     order: [["averageRating", "DESC"]],
     where: {
       numVotes: {
