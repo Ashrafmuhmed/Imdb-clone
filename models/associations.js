@@ -7,6 +7,7 @@ const DirectedBy = require("./directedBy");
 const WrittenBy = require("./writtenBy");
 const Genres = require("./genres");
 const Profession = require("./profession");
+const Principals = require("./principals");
 
 function defineAssociations() {
   // Names <-> Titles - done
@@ -76,6 +77,20 @@ function defineAssociations() {
     foreignKey: "nconst",
   });
 
+  Titles.hasMany(Principals, {
+    foreignKey: "tconst",
+    onDelete: "CASCADE",
+  });
+  Principals.belongsTo(Titles, {
+    foreignKey: "tconst",
+  });
+  Names.hasMany(Principals, {
+    foreignKey: "nconst",
+    onDelete: "CASCADE",
+  });
+  Principals.belongsTo(Names, {
+    foreignKey: "nconst",
+  });
 }
 
 module.exports = defineAssociations;

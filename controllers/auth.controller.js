@@ -9,6 +9,9 @@ const { Op } = require("sequelize");
 sendgrid.setApiKey(process.env.SENDGRID_API);
 
 exports.getRegister = (req, res, next) => {
+  if(req.session.isLoggedIn){
+    return res.redirect('/') ; 
+  }
   return res.status(STATUS_CODE.OK).render("auth/register");
 };
 
@@ -39,6 +42,9 @@ exports.postRegister = (req, res, next) => {
 
 exports.getLogin = (req, res, next) => {
   let success = undefined;
+  if(req.session.isLoggedIn){
+    return res.redirect('/') ; 
+  }
   if (req.query.reset) {
     success =
       "success=Password has been reset successfully. You can now login with your new password.";
@@ -226,10 +232,11 @@ exports.postResetPassword = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
-  req.session
-    .destroy()
-    .then((_) => {
-      res.redirect("/");
-    })
-    .catch((err) => next(err));
+  req.session.destroy((err) => {
+    if (err) {
+      logger.error("Error destroying session: " + err);
+      return next(err);
+    }
+    res.redirect("/");
+  });
 };

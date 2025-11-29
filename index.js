@@ -12,12 +12,16 @@ const csurf = require("csurf");
 
 const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
+const TitlesRoutes = require("./routes/titles.router");
+
+const titlesController = require("./controllers/titles.controller");
 
 const seedTestData = require("./seeders/imdb-test-data");
 const csurfProtection = csurf();
 
 const isAuth = require('./middleware/isauth.middleware');
 const defineAssociations = require("./models/associations");
+const User = require("./models/user");
 defineAssociations();
 
 const pgPool = new Pool({
@@ -61,12 +65,26 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req,res,next) => {
+  User.findByPk(req.session.userId).then(
+    user => {
+      if( !user ){
+        return next() ;
+      }
+      req.user = user ;
+      next() ;
+    } )
+});
+
+app.use((req,res,next) => {
   res.locals.csrfToken = req.csrfToken();
+  res.locals.isLoggedIn = req.session.isLoggedIn || false ;
   next();
 });
 
 app.use(authRoutes);
-app.use( isAuth , namesRoutes )
+app.use( isAuth , namesRoutes );
+app.use( isAuth , titlesRoutes );
+app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize
   .sync({ alter: true })
