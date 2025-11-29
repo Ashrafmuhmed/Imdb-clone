@@ -13,6 +13,7 @@ const csurf = require("csurf");
 const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
 const titlesRoutes = require("./routes/titles.router");
+const searchRoutes = require("./routes/search.router");
 
 const titlesController = require("./controllers/titles.controller");
 
@@ -78,12 +79,14 @@ app.use((req,res,next) => {
 app.use((req,res,next) => {
   res.locals.csrfToken = req.csrfToken();
   res.locals.isLoggedIn = req.session.isLoggedIn || false ;
+  res.locals.user = req.session.user || null ;
   next();
 });
 
 app.use(authRoutes);
 app.use( isAuth , namesRoutes );
 app.use( isAuth , titlesRoutes );
+app.use( isAuth , searchRoutes)
 app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize

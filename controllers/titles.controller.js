@@ -90,8 +90,8 @@ exports.getTitleDetails = (req, res, next) => {
 };
 
 exports.getTitles = (req, res, next) => {
-  const pg = req.query.page ? +req.query.page : 1;
-  const itemsPerPage = 20;
+  const pg = req.query.pg ? +req.query.pg : 1;
+  const itemsPerPage = 12;
   const offset = (pg - 1) * itemsPerPage;
   const type = req.query.type || "";
   const sort = req.query.sort || "rating";
