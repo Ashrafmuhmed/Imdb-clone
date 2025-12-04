@@ -1,57 +1,51 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../utils/database");
+const Sequelize = require('sequelize');
+module.exports = function (sequelize, DataTypes) {
+    return sequelize.define('watchlist', {
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            references: {
+                model: 'user',
+                key: 'user_id'
+            }
+        },
+        tconst: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            primaryKey: true,
+            references: {
+                model: 'title',
+                key: 'tconst'
+            }
+        }
+    }, {
+        sequelize,
+        tableName: 'watchlist',
+        schema: 'public',
+        timestamps: false,
+        indexes: [
+            {
+                name: "watchlist_pkey",
+                unique: true,
+                fields: [
+                    {name: "user_id"},
+                    {name: "tconst"},
+                ]
+            },
+            {
+                name: "watchlist_user_id_idx",
+                fields: [
+                    {name: "user_id"},
+                ]
+            },
+            {
+                name: "watchlist_tconst_idx",
+                fields: [
+                    {name: "tconst"},
+                ]
+            },
+        ]
+    });
+};
 
-const Watchlist = sequelize.define(
-  "watchlist",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    tconst: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    DateAdded: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    Status: {
-      type: DataTypes.STRING,
-      defaultValue: "Plan to Watch",
-    },
-    isFavorite: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    progress: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    }
-  },
-  {
-    tableName: "WatchList",
-    freezeTableName: true,
-    timestamps: false,
-    indexes: [
-      {
-        unique: true,
-        fields: ["userId", "tconst"], 
-      },
-      {
-        fields: ["userId"],
-      },
-      {
-        fields: ["tconst"],
-      },
-    ],
-  }
-);
-
-module.exports = Watchlist;

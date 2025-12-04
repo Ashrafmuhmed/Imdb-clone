@@ -10,21 +10,19 @@ const { Pool } = require("pg");
 const path = require("path");
 const csurf = require("csurf");
 
-const authRoutes = require("./routes/auth.router");
-const namesRoutes = require("./routes/names.router");
-const titlesRoutes = require("./routes/titles.router");
-const searchRoutes = require("./routes/search.router");
-const watchlistRoutes = require("./routes/watchlist.router");
+// const authRoutes = require("./routes/auth.router");
+// const namesRoutes = require("./routes/names.router");
+// const titlesRoutes = require("./routes/titles.router");
+// const searchRoutes = require("./routes/search.router");
+// const watchlistRoutes = require("./routes/watchlist.router");
 
-const titlesController = require("./controllers/titles.controller");
+// const titlesController = require("./controllers/titles.controller");
 
-const seedTestData = require("./seeders/imdb-test-data");
 const csurfProtection = csurf();
 
 const isAuth = require('./middleware/isauth.middleware');
-const defineAssociations = require("./models/associations");
+const initModels =require('./models/init-models');
 const User = require("./models/user");
-defineAssociations();
 
 const pgPool = new Pool({
   user: process.env.DB_USER,
@@ -88,19 +86,17 @@ app.use((req,res,next) => {
   next();
 });
 
-app.use(authRoutes);
-app.use( isAuth , namesRoutes );
-app.use( isAuth , titlesRoutes );
-app.use( isAuth , searchRoutes);
-app.use( isAuth , watchlistRoutes );
-app.use( '/'  , titlesController.getHomePage ) ;
+// app.use(authRoutes);
+// app.use( isAuth , namesRoutes );
+// app.use( isAuth , titlesRoutes );
+// app.use( isAuth , searchRoutes);
+// app.use( isAuth , watchlistRoutes );
+// app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize
   .sync({ alter: true })
   .then(() => {
-    return seedTestData();
-  })
-  .then(() => {
+      initModels(sequelize);
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
       logger.info("Database connected successfully");

@@ -1,48 +1,48 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('names', {
-    nconst: {
+  return sequelize.define('title_episode', {
+    tconst: {
       type: DataTypes.TEXT,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'title',
+        key: 'tconst'
+      }
     },
-    primary_name: {
+    parent_tconst: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'title',
+        key: 'tconst'
+      }
     },
-    birth_year: {
+    season_number: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    death_year: {
+    episode_number: {
       type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    primary_profession: {
-      type: DataTypes.ARRAY(DataTypes.TEXT),
-      allowNull: true
-    },
-    known_for_titles: {
-      type: DataTypes.ARRAY(DataTypes.TEXT),
       allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'names',
+    tableName: 'title_episode',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "names_pkey",
+        name: "title_episode_pkey",
         unique: true,
         fields: [
-          { name: "nconst" },
+          { name: "tconst" },
         ]
       },
       {
-        name: "names_primary_name_idx",
+        name: "title_episode_parent_tconst_idx",
         fields: [
-          { name: "primary_name" },
+          { name: "parent_tconst" },
         ]
       },
     ]

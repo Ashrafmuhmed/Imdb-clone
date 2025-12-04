@@ -12,3 +12,6 @@ seeders/
 
 #docs
 docs/
+
+#idea
+.idea/
