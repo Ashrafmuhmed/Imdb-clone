@@ -1,4 +1,6 @@
 const dotenv = require("dotenv");
+dotenv.config(); // Load environment variables FIRST
+
 const express = require("express");
 const morgan = require("morgan");
 const logger = require("./utils/logger");
@@ -10,19 +12,28 @@ const { Pool } = require("pg");
 const path = require("path");
 const csurf = require("csurf");
 
-// const authRoutes = require("./routes/auth.router");
+const models = require("./models");
+
+const Title = models.title;
+const TitleRatings = models.title_ratings;
+const TitleCrew = models.title_crew;
+const TitleEpisode = models.title_episode;
+const TitlePrincipals = models.title_principals;
+const Names = models.names;
+const Genre = models.genre;
+const User = models.user;
+
+const authRoutes = require("./routes/auth.router");
 // const namesRoutes = require("./routes/names.router");
 // const titlesRoutes = require("./routes/titles.router");
 // const searchRoutes = require("./routes/search.router");
 // const watchlistRoutes = require("./routes/watchlist.router");
 
-// const titlesController = require("./controllers/titles.controller");
+const titlesController = require("./controllers/titles.controller");
 
 const csurfProtection = csurf();
 
 const isAuth = require('./middleware/isauth.middleware');
-const initModels =require('./models/init-models');
-const User = require("./models/user");
 
 const pgPool = new Pool({
   user: process.env.DB_USER,
@@ -51,7 +62,6 @@ const loggerMiddleware = morgan("combined", {
 });
 
 const app = express();
-dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
@@ -86,20 +96,22 @@ app.use((req,res,next) => {
   next();
 });
 
-// app.use(authRoutes);
+app.use(authRoutes);
 // app.use( isAuth , namesRoutes );
 // app.use( isAuth , titlesRoutes );
 // app.use( isAuth , searchRoutes);
 // app.use( isAuth , watchlistRoutes );
-// app.use( '/'  , titlesController.getHomePage ) ;
+app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize
-  .sync({ alter: true })
+  .authenticate()
   .then(() => {
-      initModels(sequelize);
+    logger.info("Database connected successfully");
+    // return sequelize.sync({ alter: false });
+  })
+  .then(() => {
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
-      logger.info("Database connected successfully");
     });
   })
   .catch((err) => {

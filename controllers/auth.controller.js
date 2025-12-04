@@ -1,10 +1,12 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
 const STATUS_CODE = require("../utils/status_code");
 const logger = require("../utils/logger");
 const sendgrid = require("@sendgrid/mail");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
+const models = require("../models");
+
+const User = models.user ;
 
 sendgrid.setApiKey(process.env.SENDGRID_API);
 
