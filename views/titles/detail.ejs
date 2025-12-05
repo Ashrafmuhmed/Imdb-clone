@@ -1,5 +1,5 @@
 <%- include('../includes/head.ejs', {
-    pageTitle: (typeof title !== 'undefined' ? title.primaryTitle : 'Title') + ' - IMDB Clone',
+    pageTitle: (typeof title !== 'undefined' ? title.primary_title : 'Title') + ' - IMDB Clone',
     showNav: true,
     isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
     user: typeof user !== 'undefined' ? user : null
@@ -10,38 +10,50 @@
         <% if (typeof title !== 'undefined') { %>
         <div class="title-detail-header">
             <div class="title-detail-info">
-                <h1 class="title-detail-name"><%= title.primaryTitle %></h1>
-                <% if (title.OriginalTitle !== title.primaryTitle) { %>
-                    <p class="title-original"><%= title.OriginalTitle %></p>
+                <h1 class="title-detail-name"><%= title.primary_title %></h1>
+                <% if (title.original_title && title.original_title !== title.primary_title) { %>
+                    <p class="title-original"><%= title.original_title %></p>
                 <% } %>
                 
                 <div class="title-stats">
                     <div class="stat-item">
                         <span class="stat-label">Rating:</span>
-                        <span class="stat-value rating-highlight"><%= title.averageRating.toFixed(1) %> ⭐</span>
+                        <span class="stat-value rating-highlight">
+                            <% if (title.rating && title.rating.average_rating) { %>
+                                <%= title.rating.average_rating %> ⭐
+                            <% } else { %>
+                                N/A ⭐
+                            <% } %>
+                        </span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Votes:</span>
-                        <span class="stat-value"><%= title.numVotes.toLocaleString() %></span>
+                        <span class="stat-value">
+                            <% if (title.rating && title.rating.num_votes) { %>
+                                <%= title.rating.num_votes.toLocaleString() %>
+                            <% } else { %>
+                                N/A
+                            <% } %>
+                        </span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Type:</span>
-                        <span class="stat-value"><%= title.Ttype %></span>
+                        <span class="stat-value"><%= title.title_type || 'N/A' %></span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Year:</span>
-                        <span class="stat-value"><%= title.startYear %><% if (title.endYear) { %> - <%= title.endYear %><% } %></span>
+                        <span class="stat-value"><%= title.start_year || 'N/A' %><% if (title.end_year) { %> - <%= title.end_year %><% } %></span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Runtime:</span>
-                        <span class="stat-value"><%= title.runtimeMinutes %> minutes</span>
+                        <span class="stat-value"><%= title.runtime_minutes || 'N/A' %> minutes</span>
                     </div>
                 </div>
 
                 <% if (typeof genres !== 'undefined' && genres.length > 0) { %>
                 <div class="title-genres">
                     <% genres.forEach(genre => { %>
-                        <span class="genre-tag"><%= genre.genres %></span>
+                        <span class="genre-tag"><%= genre.name %></span>
                     <% }); %>
                 </div>
                 <% } %>
@@ -65,7 +77,7 @@
                 <div class="people-list">
                     <% directors.forEach(director => { %>
                     <a href="/names/<%= director.nconst %>" class="person-card">
-                        <div class="person-name"><%= director.name %></div>
+                        <div class="person-name"><%= director.primary_name %></div>
                     </a>
                     <% }); %>
                 </div>
@@ -78,7 +90,7 @@
                 <div class="people-list">
                     <% writers.forEach(writer => { %>
                     <a href="/names/<%= writer.nconst %>" class="person-card">
-                        <div class="person-name"><%= writer.name %></div>
+                        <div class="person-name"><%= writer.primary_name %></div>
                     </a>
                     <% }); %>
                 </div>
@@ -109,7 +121,7 @@
                                     <div class="principal-card">
                                         <div class="principal-header">
                                             <a href="/names/<%= principal.nconst %>" class="principal-name-link">
-                                                <div class="principal-name"><%= principal.name && principal.name.name ? principal.name.name : 'Unknown' %></div>
+                                                <div class="principal-name"><%= principal.primary_name || 'Unknown' %></div>
                                             </a>
                                         </div>
                                         
@@ -150,10 +162,10 @@
                     <% episodes.forEach(episode => { %>
                     <div class="episode-card">
                         <div class="episode-header">
-                            <div class="episode-number">S<%= episode.seasonNumber %>E<%= episode.episodeNumber %></div>
+                            <div class="episode-number">S<%= episode.season_number %>E<%= episode.episode_number %></div>
                             <div class="episode-info">
-                                <h3>Episode <%= episode.episodeNumber %></h3>
-                                <p class="episode-season">Season <%= episode.seasonNumber %></p>
+                                <h3>Episode <%= episode.episode_number %></h3>
+                                <p class="episode-season">Season <%= episode.season_number %></p>
                             </div>
                         </div>
                     </div>

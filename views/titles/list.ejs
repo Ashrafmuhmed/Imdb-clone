@@ -36,15 +36,27 @@
                     <a href="/titles/<%= title.tconst %>" class="title-link">
                         <div class="title-info">
                             <div class="title-header">
-                                <h3 class="title-name"><%= title.primaryTitle %></h3>
-                                <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                                <h3 class="title-name"><%= title.primary_title %></h3>
+                                <div class="title-rating">
+                                    <% if (title.rating && title.rating.average_rating) { %>
+                                        <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                    <% } else { %>
+                                        N/A ⭐
+                                    <% } %>
+                                </div>
                             </div>
                             <p class="title-meta">
-                                <%= title.startYear %><% if (title.endYear) { %> - <%= title.endYear %><% } %> • 
-                                <%= title.runtimeMinutes %> min • 
-                                <%= title.Ttype %>
+                                <%= title.start_year || 'N/A' %><% if (title.end_year) { %> - <%= title.end_year %><% } %> • 
+                                <%= title.runtime_minutes || 'N/A' %> min • 
+                                <%= title.title_type || 'N/A' %>
                             </p>
-                            <p class="title-votes"><%= title.numVotes.toLocaleString() %> votes</p>
+                            <p class="title-votes">
+                                <% if (title.rating && title.rating.num_votes) { %>
+                                    <%= title.rating.num_votes.toLocaleString() %> votes
+                                <% } else { %>
+                                    N/A votes
+                                <% } %>
+                            </p>
                         </div>
                     </a>
                 </div>

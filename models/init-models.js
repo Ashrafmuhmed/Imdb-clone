@@ -53,7 +53,9 @@ function initModels(sequelize) {
 
 
     // Title - Title Crew 1-1
-    title.hasOne(title_crew, {as: "crew", foreignKey: "tconst"});
+    title.hasOne(title_crew, {
+        as: "crew", 
+        foreignKey: "tconst"});
     title_crew.belongsTo(title, {as: "title", foreignKey: "tconst"});
 
     // Title - Title Ratings 1-1

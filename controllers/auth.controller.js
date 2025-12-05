@@ -1,12 +1,12 @@
 const bcrypt = require("bcrypt");
+const models = require("../models");
 const STATUS_CODE = require("../utils/status_code");
 const logger = require("../utils/logger");
 const sendgrid = require("@sendgrid/mail");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
-const models = require("../models");
 
-const User = models.user ;
+const User = models.user;
 
 sendgrid.setApiKey(process.env.SENDGRID_API);
 
@@ -76,7 +76,12 @@ exports.postLogin = (req, res, next) => {
         }
 
         req.session.isLoggedIn = true;
-        req.session.user = user;
+        req.session.user = {
+          user_id: user.user_id,
+          userId: user.user_id,
+          username: user.username,
+          email: user.email,
+        };
         logger.info(`User logged in: ${email}`);
         return res.redirect('/');
       });
@@ -114,8 +119,8 @@ exports.postForgetPassword = (req, res, next) => {
 
         const token = buff.toString("hex");
 
-        user.resetToken = token;
-        user.resetTokenExpiry = Date.now() + 3600000;
+        user.reset_token = token;
+        user.reset_token_expiry = Date.now() + 3600000;
 
         return user
           .save()
@@ -151,8 +156,8 @@ exports.getResetPassword = (req, res, next) => {
 
   User.findOne({
     where: {
-      resetToken: token,
-      resetTokenExpiry: {
+      reset_token: token,
+      reset_token_expiry: {
         [Op.gt]: Date.now(),
       },
     },
@@ -195,8 +200,8 @@ exports.postResetPassword = (req, res, next) => {
 
   User.findOne({
     where: {
-      resetToken: token,
-      resetTokenExpiry: {
+      reset_token: token,
+      reset_token_expiry: {
         [Op.gt]: Date.now(),
       },
     },
@@ -214,8 +219,8 @@ exports.postResetPassword = (req, res, next) => {
 
       return bcrypt.hash(password, 12).then((hashedPassword) => {
         user.password = hashedPassword;
-        user.resetToken = null;
-        user.resetTokenExpiry = null;
+        user.reset_token = null;
+        user.reset_token_expiry = null;
 
         return user.save().then((result) => {
           logger.info(`Password reset successful for user: ${user.email}`);
