@@ -19,11 +19,17 @@
                 <a href="/titles/<%= title.tconst %>" class="title-link">
                     <div class="title-info">
                         <div class="title-header">
-                            <h3 class="title-name"><%= title.primaryTitle %></h3>
-                            <div class="title-rating"><%= title.averageRating.toFixed(1) %> ⭐</div>
+                            <h3 class="title-name"><%= title.primary_title %></h3>
+                            <div class="title-rating">
+                                <% if (title.rating && title.rating.average_rating) { %>
+                                    <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                <% } else { %>
+                                    N/A ⭐
+                                <% } %>
+                            </div>
                         </div>
                         <p class="title-meta">
-                            <%= title.startYear %> • <%= title.runtimeMinutes %> min
+                            <%= title.start_year || 'N/A' %> • <%= title.runtime_minutes || 'N/A' %> min
                         </p>
                     </div>
                 </a>

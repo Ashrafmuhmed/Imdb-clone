@@ -27,7 +27,7 @@ const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
 const titlesRoutes = require("./routes/titles.router");
 // const searchRoutes = require("./routes/search.router");
-// const watchlistRoutes = require("./routes/watchlist.router");
+const watchlistRoutes = require("./routes/watchlist.router");
 
 const titlesController = require("./controllers/titles.controller");
 
@@ -100,7 +100,7 @@ app.use(authRoutes);
 app.use( namesRoutes );
 app.use( titlesRoutes );
 // app.use( isAuth , searchRoutes);
-// app.use( isAuth , watchlistRoutes );
+app.use( watchlistRoutes );
 app.use( '/'  , titlesController.getHomePage ) ;
 
 sequelize
