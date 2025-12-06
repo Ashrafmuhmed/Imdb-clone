@@ -18,9 +18,9 @@
                 <div class="name-card">
                     <a href="/names/<%= name.nconst %>" class="name-link">
                         <div class="name-info">
-                            <h3 class="name-title"><%= name.name %></h3>
+                            <h3 class="name-title"><%= name.primary_name %></h3>
                             <p class="name-meta">
-                                Born: <%= name.birthYear %><% if (name.deathYear) { %> • Died: <%= name.deathYear %><% } %>
+                                Born: <%= name.birth_year %><% if (name.death_year) { %> • Died: <%= name.death_year %><% } %>
                             </p>
                         </div>
                     </a>

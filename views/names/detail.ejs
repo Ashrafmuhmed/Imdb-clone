@@ -1,5 +1,5 @@
 <%- include('../includes/head.ejs', {
-    pageTitle: (typeof name !== 'undefined' ? name.name : 'Person') + ' - IMDB Clone',
+    pageTitle: (typeof name !== 'undefined' ? name.primary_name : 'Person') + ' - IMDB Clone',
     showNav: true,
     isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
     user: typeof user !== 'undefined' ? user : null
@@ -10,17 +10,17 @@
         <% if (typeof name !== 'undefined') { %>
         <div class="name-detail-header">
             <div class="name-detail-info">
-                <h1 class="name-detail-title"><%= name.name %></h1>
+                <h1 class="name-detail-title"><%= name.primary_name %></h1>
                 
                 <div class="name-stats">
                     <div class="stat-item">
                         <span class="stat-label">Born:</span>
-                        <span class="stat-value"><%= name.birthYear %></span>
+                        <span class="stat-value"><%= name.birth_year || 'N/A' %></span>
                     </div>
-                    <% if (name.deathYear) { %>
+                    <% if (name.death_year) { %>
                     <div class="stat-item">
                         <span class="stat-label">Died:</span>
-                        <span class="stat-value"><%= name.deathYear %></span>
+                        <span class="stat-value"><%= name.death_year %></span>
                     </div>
                     <% } %>
                 </div>
@@ -30,7 +30,7 @@
                     <h3>Professions</h3>
                     <div class="professions-list">
                         <% professions.forEach(prof => { %>
-                            <span class="profession-tag"><%= prof.profession %></span>
+                            <span class="profession-tag"><%= prof %></span>
                         <% }); %>
                     </div>
                 </div>
@@ -48,11 +48,17 @@
                         <a href="/titles/<%= title.tconst %>" class="title-link">
                             <div class="title-info">
                                 <div class="title-header">
-                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
-                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                    <h3 class="title-name"><%= title.primary_title %></h3>
+                                    <div class="title-rating">
+                                        <% if (title.rating && title.rating.average_rating) { %>
+                                            <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                        <% } else { %>
+                                            N/A ⭐
+                                        <% } %>
+                                    </div>
                                 </div>
                                 <p class="title-meta">
-                                    <%= title.runtimeMinutes %> min
+                                    <%= title.runtime_minutes || 'N/A' %> min
                                 </p>
                             </div>
                         </a>
@@ -71,11 +77,17 @@
                         <a href="/titles/<%= title.tconst %>" class="title-link">
                             <div class="title-info">
                                 <div class="title-header">
-                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
-                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                    <h3 class="title-name"><%= title.primary_title %></h3>
+                                    <div class="title-rating">
+                                        <% if (title.rating && title.rating.average_rating) { %>
+                                            <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                        <% } else { %>
+                                            N/A ⭐
+                                        <% } %>
+                                    </div>
                                 </div>
                                 <p class="title-meta">
-                                    <%= title.startYear %>
+                                    <%= title.start_year || 'N/A' %>
                                 </p>
                             </div>
                         </a>
@@ -94,11 +106,17 @@
                         <a href="/titles/<%= title.tconst %>" class="title-link">
                             <div class="title-info">
                                 <div class="title-header">
-                                    <h3 class="title-name"><%= title.primaryTitle %></h3>
-                                    <div class="title-rating"><%= title.averageRating ? title.averageRating.toFixed(1) : 'N/A' %> ⭐</div>
+                                    <h3 class="title-name"><%= title.primary_title %></h3>
+                                    <div class="title-rating">
+                                        <% if (title.rating && title.rating.average_rating) { %>
+                                            <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                        <% } else { %>
+                                            N/A ⭐
+                                        <% } %>
+                                    </div>
                                 </div>
                                 <p class="title-meta">
-                                    <%= title.startYear %>
+                                    <%= title.start_year || 'N/A' %>
                                 </p>
                             </div>
                         </a>

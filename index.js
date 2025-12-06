@@ -24,7 +24,7 @@ const Genre = models.genre;
 const User = models.user;
 
 const authRoutes = require("./routes/auth.router");
-// const namesRoutes = require("./routes/names.router");
+const namesRoutes = require("./routes/names.router");
 const titlesRoutes = require("./routes/titles.router");
 // const searchRoutes = require("./routes/search.router");
 // const watchlistRoutes = require("./routes/watchlist.router");
@@ -97,7 +97,7 @@ app.use((req,res,next) => {
 });
 
 app.use(authRoutes);
-// app.use( isAuth , namesRoutes );
+app.use( namesRoutes );
 app.use( titlesRoutes );
 // app.use( isAuth , searchRoutes);
 // app.use( isAuth , watchlistRoutes );
