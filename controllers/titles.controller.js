@@ -88,14 +88,29 @@ exports.getTitleDetails = (req, res, next) => {
             Names.findAll({where: {nconst: {[Op.in]: writters}}}).then(
                 (writtersDet) => {
                     writters = writtersDet;
+                    
+                    const showAll = req.query.showAll === 'true';
+                    const limit = 8;
+                    
+                    const limitedDirectors = showAll ? directors : directors.slice(0, limit);
+                    const limitedWriters = showAll ? writters : writters.slice(0, limit);
+                    const limitedPrincipals = showAll ? (title.principals || []) : (title.principals || []).slice(0, limit);
+                    
                     res.status(STATUS_CODE.OK).render("titles/detail", {
                         title: title,
-                        directors: directors,
-                        writers: writters,
+                        directors: limitedDirectors,
+                        writers: limitedWriters,
+                        allDirectors: directors,
+                        allWriters: writters,
                         genres: title.genres || [],
                         episodes: title.episodes || [],
-                        principals: title.principals || [],
+                        principals: limitedPrincipals,
+                        allPrincipals: title.principals || [],
                         rating: title.rating,
+                        showAll: showAll,
+                        hasMoreDirectors: directors.length > limit,
+                        hasMoreWriters: writters.length > limit,
+                        hasMorePrincipals: (title.principals || []).length > limit,
                     });
                 }
             );

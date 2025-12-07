@@ -72,7 +72,7 @@
 
         <div class="title-detail-content">
             <% if (typeof directors !== 'undefined' && directors.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="directors">
                 <h2>Directors</h2>
                 <div class="people-list">
                     <% directors.forEach(director => { %>
@@ -81,11 +81,14 @@
                     </a>
                     <% }); %>
                 </div>
+                <% if (typeof hasMoreDirectors !== 'undefined' && hasMoreDirectors && !showAll) { %>
+                    <a href="?showAll=true#directors" class="show-all-link">Show all directors (<%= typeof allDirectors !== 'undefined' ? allDirectors.length : directors.length %>)</a>
+                <% } %>
             </section>
             <% } %>
 
             <% if (typeof writers !== 'undefined' && writers.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="writers">
                 <h2>Writers</h2>
                 <div class="people-list">
                     <% writers.forEach(writer => { %>
@@ -94,11 +97,14 @@
                     </a>
                     <% }); %>
                 </div>
+                <% if (typeof hasMoreWriters !== 'undefined' && hasMoreWriters && !showAll) { %>
+                    <a href="?showAll=true#writers" class="show-all-link">Show all writers (<%= typeof allWriters !== 'undefined' ? allWriters.length : writers.length %>)</a>
+                <% } %>
             </section>
             <% } %>
 
             <% if (typeof principals !== 'undefined' && principals.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="cast-crew">
                 <h2>Cast & Crew</h2>
                 <div class="principals-list">
                     <% 
@@ -152,6 +158,9 @@
                         </div>
                     <% }); %>
                 </div>
+                <% if (typeof hasMorePrincipals !== 'undefined' && hasMorePrincipals && !showAll) { %>
+                    <a href="?showAll=true#cast-crew" class="show-all-link">Show all cast & crew (<%= typeof allPrincipals !== 'undefined' ? allPrincipals.length : principals.length %>)</a>
+                <% } %>
             </section>
             <% } %>
 

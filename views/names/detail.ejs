@@ -40,7 +40,7 @@
 
         <div class="name-detail-content">
             <% if (typeof knownFor !== 'undefined' && knownFor.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="known-for">
                 <h2>Known For</h2>
                 <div class="titles-grid">
                     <% knownFor.forEach(title => { %>
@@ -65,11 +65,14 @@
                     </div>
                     <% }); %>
                 </div>
+                <% if (typeof hasMoreKnownFor !== 'undefined' && hasMoreKnownFor && !showAll) { %>
+                    <a href="?showAll=true#known-for" class="show-all-link">Show all known for (<%= typeof allKnownFor !== 'undefined' ? allKnownFor.length : knownFor.length %>)</a>
+                <% } %>
             </section>
             <% } %>
 
             <% if (typeof directedTitles !== 'undefined' && directedTitles.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="directed">
                 <h2>Directed</h2>
                 <div class="titles-grid">
                     <% directedTitles.forEach(title => { %>
@@ -94,11 +97,14 @@
                     </div>
                     <% }); %>
                 </div>
+                <% if (typeof hasMoreDirectedTitles !== 'undefined' && hasMoreDirectedTitles && !showAll) { %>
+                    <a href="?showAll=true#directed" class="show-all-link">Show all directed titles (<%= typeof allDirectedTitles !== 'undefined' ? allDirectedTitles.length : directedTitles.length %>)</a>
+                <% } %>
             </section>
             <% } %>
 
             <% if (typeof writtenTitles !== 'undefined' && writtenTitles.length > 0) { %>
-            <section class="detail-section">
+            <section class="detail-section" id="written">
                 <h2>Written</h2>
                 <div class="titles-grid">
                     <% writtenTitles.forEach(title => { %>
@@ -123,6 +129,9 @@
                     </div>
                     <% }); %>
                 </div>
+                <% if (typeof hasMoreWrittenTitles !== 'undefined' && hasMoreWrittenTitles && !showAll) { %>
+                    <a href="?showAll=true#written" class="show-all-link">Show all written titles (<%= typeof allWrittenTitles !== 'undefined' ? allWrittenTitles.length : writtenTitles.length %>)</a>
+                <% } %>
             </section>
             <% } %>
         </div>

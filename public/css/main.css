@@ -1189,3 +1189,20 @@ body.auth-page a:hover {
         padding: 1rem;
     }
 }
+
+/* Show All Link */
+.show-all-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #f5c518;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.show-all-link:hover {
+    background: #e6b517;
+}

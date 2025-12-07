@@ -107,14 +107,26 @@ exports.getName = (req, res, next) => {
             .map((ct) => ct.title)
             .filter((t) => t);
 
-          // res.json({ writtenTitles, directedTitles });
+          const showAll = req.query.showAll === 'true';
+          const limit = 8;
+          
+          const limitedKnownFor = showAll ? (knownFor || []) : (knownFor || []).slice(0, limit);
+          const limitedWrittenTitles = showAll ? writtenTitles : writtenTitles.slice(0, limit);
+          const limitedDirectedTitles = showAll ? directedTitles : directedTitles.slice(0, limit);
 
           res.status(STATUS_CODE.OK).render("names/detail", {
             name: name,
             professions: name.primary_profession || [],
-            knownFor: knownFor || [],
-            writtenTitles: writtenTitles || [],
-            directedTitles: directedTitles || [],
+            knownFor: limitedKnownFor,
+            writtenTitles: limitedWrittenTitles,
+            directedTitles: limitedDirectedTitles,
+            allKnownFor: knownFor || [],
+            allWrittenTitles: writtenTitles || [],
+            allDirectedTitles: directedTitles || [],
+            showAll: showAll,
+            hasMoreKnownFor: (knownFor || []).length > limit,
+            hasMoreWrittenTitles: writtenTitles.length > limit,
+            hasMoreDirectedTitles: directedTitles.length > limit,
           });
         }
       );
