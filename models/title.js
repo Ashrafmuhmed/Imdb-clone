@@ -78,6 +78,30 @@ module.exports = function(sequelize, DataTypes) {
           { name: "start_year" },
         ]
       },
+      {
+        name: "title_name_year_idx",
+        fields: [
+          { name: "primary_title" },
+          { name: "start_year" },
+        ]
+      },
+      {
+        name: "title_original_year_idx",
+        fields: [
+          { name: "original_title" },
+          { name: "start_year" },
+        ]
+      },
+      {
+        name: "title_primary_title_lower_idx",
+        using: "BTREE",
+        fields: [sequelize.literal('LOWER("primary_title")')],
+      },
+      {
+        name: "title_original_title_lower_idx",
+        using: "BTREE",
+        fields: [sequelize.literal('LOWER("original_title")')],
+      },
     ]
   });
 };

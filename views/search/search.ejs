@@ -1,0 +1,95 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'Search Results - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null,
+    query: typeof query !== 'undefined' ? query : ''
+}) %>
+
+<main class="search-results-container">
+    <div class="container">
+        <div class="search-header">
+            <h1>Search Results</h1>
+            <p class="search-query">Results for: "<%= typeof query !== 'undefined' ? query : '' %>"</p>
+        </div>
+
+        <% if (typeof titles !== 'undefined' && titles.length > 0) { %>
+        <section class="search-section">
+            <h2 class="section-title">Titles (<%= titles.length %>)</h2>
+            <div class="titles-grid">
+                <% titles.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.primaryTitle %></h3>
+                                <div class="title-rating">
+                                    <% if (title.averageRating && title.averageRating > 0) { %>
+                                        <%= title.averageRating.toFixed(1) %> ⭐
+                                    <% } else { %>
+                                        N/A ⭐
+                                    <% } %>
+                                </div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.startYear || 'N/A' %><% if (title.endYear) { %> - <%= title.endYear %><% } %> • 
+                                <%= title.runtimeMinutes || 'N/A' %> min • 
+                                <%= title.title_type || 'N/A' %>
+                            </p>
+                            <% if (title.genres && title.genres.length > 0) { %>
+                                <p class="title-genres">
+                                    <% title.genres.forEach((genre, index) => { %>
+                                        <%= genre.name %><% if (index < title.genres.length - 1) { %>, <% } %>
+                                    <% }); %>
+                                </p>
+                            <% } %>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+        <% if (typeof names !== 'undefined' && names.length > 0) { %>
+        <section class="search-section">
+            <h2 class="section-title">People (<%= names.length %>)</h2>
+            <div class="names-grid">
+                <% names.forEach(name => { %>
+                <div class="name-card">
+                    <a href="/names/<%= name.nconst %>" class="name-link">
+                        <div class="name-info">
+                            <h3 class="name-title"><%= name.name %></h3>
+                            <p class="name-meta">
+                                <% if (name.birthYear) { %>Born: <%= name.birthYear %><% } %><% if (name.deathYear) { %> • Died: <%= name.deathYear %><% } %>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+        <% if ((typeof titles === 'undefined' || titles.length === 0) && (typeof names === 'undefined' || names.length === 0)) { %>
+        <div class="no-results">
+            <p>No results found for "<%= typeof query !== 'undefined' ? query : '' %>"</p>
+            <p>Try searching with different keywords.</p>
+        </div>
+        <% } %>
+
+        <% if (typeof pagination !== 'undefined' && (pagination.hasNext || pagination.hasPrev)) { %>
+        <div class="pagination">
+            <% if (pagination.hasPrev) { %>
+                <a href="/search?q=<%= encodeURIComponent(query) %>&page=<%= pagination.prevPage %>" class="page-btn">Previous</a>
+            <% } %>
+            <span class="page-info">Page <%= pagination.page %></span>
+            <% if (pagination.hasNext) { %>
+                <a href="/search?q=<%= encodeURIComponent(query) %>&page=<%= pagination.nextPage %>" class="page-btn">Next</a>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../includes/end.ejs') %>

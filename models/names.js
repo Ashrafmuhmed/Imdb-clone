@@ -45,6 +45,11 @@ module.exports = function(sequelize, DataTypes) {
           { name: "primary_name" },
         ]
       },
+      {
+        name: "names_primary_name_lower_idx",
+        using: "BTREE",
+        fields: [sequelize.literal('LOWER("primary_name")')],
+      },
     ]
   });
 };

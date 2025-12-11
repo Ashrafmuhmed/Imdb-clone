@@ -3,20 +3,20 @@
         <div class="nav-logo">
             <a href="/">IMDB Clone</a>
         </div>
-        
+
         <div class="nav-search">
-            <form action="/search" method="GET" class="search-form">
-                <input type="text" name="q" placeholder="Search movies, TV shows, people..." value="<%= typeof query !== 'undefined' ? query : '' %>" class="search-input">
-                <button type="submit" class="search-btn">🔍</button>
+            <form action="/search" method="GET" class="nav-search-form">
+                <input type="text" name="q" placeholder="Search movies, shows, people..." class="nav-search-input" value="<%= typeof query !== 'undefined' ? query : '' %>">
+                <button type="submit" class="nav-search-btn">🔍</button>
             </form>
         </div>
 
         <div class="nav-links">
-            <a href="/titles" class="nav-link">Movies & TV</a>
-            <a href="/names" class="nav-link">People</a>
-            <a href="/search/advanced" class="nav-link">Advanced Search</a>
+            <a href="/titles" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'titles' ? 'active' : '' %>">Movies & TV</a>
+            <a href="/names" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'names' ? 'active' : '' %>">People</a>
+            <a href="/search/advanced" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'advanced-search' ? 'active' : '' %>">Advanced Search</a>
             <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
-                <a href="/watchlist" class="nav-link">Watchlist</a>
+                <a href="/watchlist" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'watchlist' ? 'active' : '' %>">Watchlist</a>
                 <div class="nav-user">
                     <span class="user-name"><%= user.username %></span>
                     <form action="/logout" method="POST" style="display: inline;">

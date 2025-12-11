@@ -43,6 +43,13 @@ module.exports = function(sequelize, DataTypes) {
           { name: "num_votes" },
         ]
       },
+      {
+        name: "title_ratings_rating_votes_idx",
+        fields: [
+          { name: "average_rating" },
+          { name: "num_votes" },
+        ]
+      },
     ]
   });
 };

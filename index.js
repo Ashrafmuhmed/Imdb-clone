@@ -26,7 +26,7 @@ const User = models.user;
 const authRoutes = require("./routes/auth.router");
 const namesRoutes = require("./routes/names.router");
 const titlesRoutes = require("./routes/titles.router");
-// const searchRoutes = require("./routes/search.router");
+const searchRoutes = require("./routes/search.router");
 const watchlistRoutes = require("./routes/watchlist.router");
 
 const titlesController = require("./controllers/titles.controller");
@@ -97,11 +97,20 @@ app.use((req,res,next) => {
 });
 
 app.use(authRoutes);
-app.use( namesRoutes );
-app.use( titlesRoutes );
-// app.use( isAuth , searchRoutes);
-app.use( watchlistRoutes );
+app.use( isAuth , namesRoutes );
+app.use( isAuth , titlesRoutes );
+app.use( isAuth , searchRoutes );
+app.use( isAuth , watchlistRoutes );
 app.use( '/'  , titlesController.getHomePage ) ;
+
+app.use( (error,req,res,next) => {
+  return res.status(500).render('error', {
+    pageTitle: 'Internal Server Error',
+    statusCode: 500,
+    message: error.message || 'Internal Server Error',
+    description: 'An error occurred while processing your request.',
+  });
+});
 
 sequelize
   .authenticate()

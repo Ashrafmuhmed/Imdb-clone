@@ -2,7 +2,8 @@
     pageTitle: 'People - IMDB Clone',
     showNav: true,
     isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
-    user: typeof user !== 'undefined' ? user : null
+    user: typeof user !== 'undefined' ? user : null,
+    currentPage: 'names'
 }) %>
 
 <main class="names-list-container">
@@ -20,7 +21,15 @@
                         <div class="name-info">
                             <h3 class="name-title"><%= name.primary_name %></h3>
                             <p class="name-meta">
-                                Born: <%= name.birth_year %><% if (name.death_year) { %> • Died: <%= name.death_year %><% } %>
+                                <% if (name.birth_year) { %>
+                                    Born: <%= name.birth_year %>
+                                <% } %>
+                                <% if (name.death_year) { %>
+                                    Died: <%= name.death_year %>
+                                <% } %>
+                                <% if( !name.birth_year && !name.death_year) { %>
+                                    N/A
+                                <% } %>
                             </p>
                         </div>
                     </a>

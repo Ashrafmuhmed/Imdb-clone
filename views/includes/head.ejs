@@ -16,6 +16,7 @@
         <%- include('nav.ejs', { 
             isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
             user: typeof user !== 'undefined' ? user : null,
-            query: typeof query !== 'undefined' ? query : ''
+            query: typeof query !== 'undefined' ? query : '',
+            currentPage: typeof currentPage !== 'undefined' ? currentPage : ''
         }) %>
     <% } %>

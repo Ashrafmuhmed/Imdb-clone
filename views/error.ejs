@@ -1,0 +1,194 @@
+<%- include('./includes/head.ejs', {
+    pageTitle: 'Error - IMDB Clone',
+    showNav: true,
+    isLoggedIn: false,
+    user: null
+}) %>
+
+
+<main class="error-page-container">
+    <div class="error-hero">
+        <div class="error-content">
+            <div class="message-container">
+                <%= message %>
+            </div>
+            <div class="error-code">
+                500
+            </div>
+            <div class="error-message">
+                An error occurred while processing your request.
+            </div>
+            <div class="error-description">
+                Please try again later.
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<style>
+    .error-page-container {
+        min-height: calc(100vh - 80px);
+        background: #f5f5f5;
+    }
+
+    .error-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .error-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .error-icon {
+        font-size: 100px;
+        margin-bottom: 1.5rem;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .error-code {
+        font-size: 6rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .error-message {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .error-description {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .error-details-section {
+        padding: 3rem 2rem;
+        background: white;
+    }
+
+    .error-details-card {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .details-title {
+        font-size: 1.3rem;
+        color: #856404;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .details-content {
+        background: #1a1a1a;
+        border-radius: 8px;
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+
+    .details-content pre {
+        color: #00ff00;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .error-help-section {
+        padding: 4rem 2rem;
+        background: #f5f5f5;
+    }
+
+    .error-help-section .section-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 3rem;
+        color: #333;
+    }
+
+    @media (max-width: 768px) {
+        .error-code {
+            font-size: 4rem;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+        }
+
+        .error-description {
+            font-size: 1rem;
+        }
+
+        .error-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .error-actions .btn {
+            width: 100%;
+        }
+
+        .error-icon {
+            font-size: 80px;
+        }
+
+        .error-details-card {
+            padding: 1.5rem;
+        }
+
+        .details-content pre {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .error-hero {
+            padding: 2rem 1rem;
+            min-height: 350px;
+        }
+
+        .error-code {
+            font-size: 3rem;
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<%- include('./includes/end.ejs') %>

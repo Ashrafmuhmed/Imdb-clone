@@ -1,0 +1,292 @@
+<%- include('../includes/head.ejs', {
+    pageTitle: 'Advanced Search - IMDB Clone',
+    showNav: true,
+    isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn : false,
+    user: typeof user !== 'undefined' ? user : null,
+    currentPage: 'advanced-search'
+}) %>
+
+<main class="advanced-search-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>Advanced Search</h1>
+            <p class="page-description">Search for movies and TV shows with advanced filters</p>
+        </div>
+
+        <div class="search-form-container">
+            <form method="GET" action="/search/advanced" class="advanced-search-form" id="advancedSearchForm">
+                <div class="form-section">
+                    <h2 class="section-title">Title Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="titleType">Title Type <span class="form-hint">(Select one)</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="titleType" value=""
+                                       <%= typeof filters !== 'undefined' && (!filters.titleType || filters.titleType === '') ? 'checked' : '' %>>
+                                <span>All Types</span>
+                            </label>
+                            <% if (typeof titleTypes !== 'undefined' && titleTypes.length > 0) { %>
+                                <% titleTypes.forEach(type => { %>
+                                    <label class="radio-label">
+                                        <input type="radio" name="titleType" value="<%= type %>"
+                                               <%= typeof filters !== 'undefined' && filters.titleType === type ? 'checked' : '' %>>
+                                        <span><%= type %></span>
+                                    </label>
+                                <% }); %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Year Range</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startYear">Start Year</label>
+                            <input type="number" id="startYear" name="startYear" 
+                                   placeholder="1900" 
+                                   min="1900" max="2030"
+                                   value="<%= typeof filters !== 'undefined' && filters.startYear ? filters.startYear : '' %>"
+                                   class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="endYear">End Year</label>
+                            <input type="number" id="endYear" name="endYear" 
+                                   placeholder="2024" 
+                                   min="1900" max="2030"
+                                   value="<%= typeof filters !== 'undefined' && filters.endYear ? filters.endYear : '' %>"
+                                   class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Rating Range</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minRating">Minimum Rating</label>
+                            <input type="number" id="minRating" name="minRating" 
+                                   placeholder="0.0" 
+                                   min="0" max="10" step="0.1"
+                                   value="<%= typeof filters !== 'undefined' && filters.minRating ? filters.minRating : '' %>"
+                                   class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxRating">Maximum Rating</label>
+                            <input type="number" id="maxRating" name="maxRating" 
+                                   placeholder="10.0" 
+                                   min="0" max="10" step="0.1"
+                                   value="<%= typeof filters !== 'undefined' && filters.maxRating ? filters.maxRating : '' %>"
+                                   class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Genres <span class="form-hint">(Maximum 3)</span></h2>
+                    <div class="checkbox-group genres-grid" id="genresContainer">
+                        <% if (typeof genres !== 'undefined' && genres.length > 0) { %>
+                            <% genres.forEach(genre => { %>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="genre" value="<%= genre %>"
+                                           <%= typeof filters !== 'undefined' && filters.genres && filters.genres.includes(genre) ? 'checked' : '' %>>
+                                    <span><%= genre %></span>
+                                </label>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                    <p class="genre-limit-message" id="genreLimitMessage"></p>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Sort By</h2>
+                    <div class="form-group">
+                        <label for="sortBy">Sort Order</label>
+                        <select id="sortBy" name="sortBy" class="form-input">
+                            <option value="rating_desc" <%= typeof filters !== 'undefined' && filters.sortBy === 'rating_desc' ? 'selected' : '' %>>
+                                Rating: High to Low
+                            </option>
+                            <option value="rating_asc" <%= typeof filters !== 'undefined' && filters.sortBy === 'rating_asc' ? 'selected' : '' %>>
+                                Rating: Low to High
+                            </option>
+                            <option value="year_desc" <%= typeof filters !== 'undefined' && filters.sortBy === 'year_desc' ? 'selected' : '' %>>
+                                Year: Newest First
+                            </option>
+                            <option value="year_asc" <%= typeof filters !== 'undefined' && filters.sortBy === 'year_asc' ? 'selected' : '' %>>
+                                Year: Oldest First
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="/search/advanced" class="btn btn-secondary">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <% if (typeof titles !== 'undefined') { %>
+            <div class="search-results">
+                <div class="results-header">
+                    <h2>Search Results</h2>
+                    <% if (typeof pagination !== 'undefined') { %>
+                        <p class="results-count">
+                            <% if (typeof titles !== 'undefined' && titles.length > 0) { %>
+                                Found <%= titles.length %> titles<% if (pagination.hasMore) { %> (more available)<% } %>
+                            <% } else { %>
+                                No results found
+                            <% } %>
+                        </p>
+                    <% } %>
+                </div>
+
+                <% if (typeof titles !== 'undefined' && titles.length > 0) { %>
+                    <section class="search-section">
+                        <h3 class="section-title">Titles (<%= titles.length %>)</h3>
+                        <div class="titles-grid">
+                            <% titles.forEach(title => { %>
+                                <div class="title-card">
+                                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                                        <div class="title-info">
+                                            <div class="title-header">
+                                                <h3 class="title-name"><%= title.primary_title %></h3>
+                                                <div class="title-rating">
+                                                    <% if (title.rating && title.rating.average_rating) { %>
+                                                        <%= title.rating.average_rating.toFixed(1) %> ⭐
+                                                    <% } else { %>
+                                                        N/A ⭐
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <p class="title-meta">
+                                                <%= title.start_year || 'N/A' %><% if (title.end_year) { %> - <%= title.end_year %><% } %> • 
+                                                <%= title.runtime_minutes || 'N/A' %> min • 
+                                                <%= title.title_type || 'N/A' %>
+                                            </p>
+                                            <% if (title.genres && title.genres.length > 0) { %>
+                                                <p class="title-genres">
+                                                    <% title.genres.forEach((genre, index) => { %>
+                                                        <%= genre.name %><% if (index < title.genres.length - 1) { %>, <% } %>
+                                                    <% }); %>
+                                                </p>
+                                            <% } %>
+                                            <p class="title-votes">
+                                                <% if (title.rating && title.rating.num_votes) { %>
+                                                    <%= title.rating.num_votes.toLocaleString() %> votes
+                                                <% } else { %>
+                                                    N/A votes
+                                                <% } %>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </section>
+                <% } %>
+
+                <% if (typeof titles === 'undefined' || titles.length === 0) { %>
+                    <div class="no-results">
+                        <p>No results found matching your criteria.</p>
+                        <p>Try adjusting your search filters.</p>
+                    </div>
+                <% } %>
+
+                <% if (typeof pagination !== 'undefined' && (pagination.hasNext || pagination.hasPrev)) { %>
+                    <div class="pagination">
+                        <% if (pagination.hasPrev) { %>
+                            <% 
+                            const prevQuery = [];
+                            if (typeof filters !== 'undefined') {
+                                if (filters.titleType) prevQuery.push('titleType=' + encodeURIComponent(filters.titleType));
+                                if (filters.startYear) prevQuery.push('startYear=' + encodeURIComponent(filters.startYear));
+                                if (filters.endYear) prevQuery.push('endYear=' + encodeURIComponent(filters.endYear));
+                                if (filters.minRating) prevQuery.push('minRating=' + encodeURIComponent(filters.minRating));
+                                if (filters.maxRating) prevQuery.push('maxRating=' + encodeURIComponent(filters.maxRating));
+                                if (filters.sortBy) prevQuery.push('sortBy=' + encodeURIComponent(filters.sortBy));
+                                if (filters.genres && Array.isArray(filters.genres)) {
+                                    filters.genres.forEach(genre => {
+                                        prevQuery.push('genre=' + encodeURIComponent(genre));
+                                    });
+                                }
+                            }
+                            prevQuery.push('page=' + (pagination.page - 1));
+                            %>
+                            <a href="/search/advanced?<%= prevQuery.join('&') %>" 
+                               class="pagination-btn">Previous</a>
+                        <% } %>
+                        
+                        <span class="pagination-info">Page <%= pagination.page %></span>
+                        
+                        <% if (pagination.hasNext) { %>
+                            <% 
+                            const nextQuery = [];
+                            if (typeof filters !== 'undefined') {
+                                if (filters.titleType) nextQuery.push('titleType=' + encodeURIComponent(filters.titleType));
+                                if (filters.startYear) nextQuery.push('startYear=' + encodeURIComponent(filters.startYear));
+                                if (filters.endYear) nextQuery.push('endYear=' + encodeURIComponent(filters.endYear));
+                                if (filters.minRating) nextQuery.push('minRating=' + encodeURIComponent(filters.minRating));
+                                if (filters.maxRating) nextQuery.push('maxRating=' + encodeURIComponent(filters.maxRating));
+                                if (filters.sortBy) nextQuery.push('sortBy=' + encodeURIComponent(filters.sortBy));
+                                if (filters.genres && Array.isArray(filters.genres)) {
+                                    filters.genres.forEach(genre => {
+                                        nextQuery.push('genre=' + encodeURIComponent(genre));
+                                    });
+                                }
+                            }
+                            nextQuery.push('page=' + (pagination.page + 1));
+                            %>
+                            <a href="/search/advanced?<%= nextQuery.join('&') %>" 
+                               class="pagination-btn">Next</a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<script>
+    // Limit genre selection to maximum 3
+    (function() {
+        const genreCheckboxes = document.querySelectorAll('#genresContainer input[type="checkbox"]');
+        const genreLimitMessage = document.getElementById('genreLimitMessage');
+        const maxGenres = 3;
+
+        function updateGenreLimitMessage() {
+            const checkedCount = document.querySelectorAll('#genresContainer input[type="checkbox"]:checked').length;
+            if (checkedCount >= maxGenres) {
+                genreLimitMessage.textContent = `Maximum ${maxGenres} genres selected. Uncheck one to select another.`;
+                genreLimitMessage.style.color = '#d63031';
+                // Disable unchecked checkboxes
+                genreCheckboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        cb.disabled = true;
+                        cb.parentElement.style.opacity = '0.5';
+                        cb.parentElement.style.cursor = 'not-allowed';
+                    }
+                });
+            } else {
+                genreLimitMessage.textContent = `${checkedCount} of ${maxGenres} genres selected.`;
+                genreLimitMessage.style.color = '#666';
+                // Enable all checkboxes
+                genreCheckboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.parentElement.style.opacity = '1';
+                    cb.parentElement.style.cursor = 'pointer';
+                });
+            }
+        }
+
+        genreCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateGenreLimitMessage);
+        });
+
+        // Initialize message
+        updateGenreLimitMessage();
+    })();
+</script>
+
+<%- include('../includes/end.ejs') %>
