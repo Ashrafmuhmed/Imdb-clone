@@ -50,6 +50,12 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [sequelize.literal('LOWER("primary_name")')],
       },
+      {
+        name: "names_popularity_score_idx",
+        fields: [
+          { name: "popularity_score" },
+        ]
+      },
     ]
   });
 };

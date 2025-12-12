@@ -9,7 +9,7 @@ const TitleRatings = models.title_ratings;
 
 exports.getNames = (req, res, next) => {
   const pg = req.query.pg ? +req.query.pg : 1;
-  const limit = 20;
+  const limit = 12;
   const offset = (pg - 1) * limit;
 
   Names.count()
@@ -17,6 +17,7 @@ exports.getNames = (req, res, next) => {
       Names.findAll({
         limit,
         offset,
+        order: [["popularity_score", "DESC"]],
         attributes: ["nconst", "primary_name", "birth_year", "death_year"],
       }).then((names) => {
         // res.json(names);
