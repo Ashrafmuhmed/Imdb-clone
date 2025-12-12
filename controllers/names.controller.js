@@ -6,6 +6,7 @@ const Names = models.names;
 const Title = models.title;
 const TitleCrew = models.title_crew;
 const TitleRatings = models.title_ratings;
+const TitlePrincipals = models.title_principals;
 
 exports.getNames = (req, res, next) => {
   const pg = req.query.pg ? +req.query.pg : 1;
@@ -87,8 +88,30 @@ exports.getName = (req, res, next) => {
         ],
       });
 
-      return Promise.all([knownForPromise, crewTitlesPromise]).then(
-        ([knownFor, crewTitles]) => {
+      const principalTitlesPromise = TitlePrincipals.findAll({
+        where: { nconst: nameId },
+        attributes: ["tconst", "category", "job", "characters", "ordering"],
+        include: [
+          {
+            model: Title,
+            as: "title",
+            attributes: ["tconst", "primary_title", "start_year", "title_type"],
+            include: [
+              {
+                model: TitleRatings,
+                as: "rating",
+                required: false,
+              },
+            ],
+            required: false,
+          },
+        ],
+        order: [["tconst", "ASC"], ["ordering", "ASC"]],
+        subQuery: false,
+      });
+
+      return Promise.all([knownForPromise, crewTitlesPromise, principalTitlesPromise]).then(
+        ([knownFor, crewTitles, principalTitles]) => {
           const directedTitles = crewTitles
             .filter(
               (ct) =>
@@ -108,12 +131,23 @@ exports.getName = (req, res, next) => {
             .map((ct) => ct.title)
             .filter((t) => t);
 
+          const deduplicatedPrincipals = [];
+          const seenTconsts = new Set();
+          
+          principalTitles.forEach((principal) => {
+            if (principal.title && !seenTconsts.has(principal.title.tconst)) {
+              seenTconsts.add(principal.title.tconst);
+              deduplicatedPrincipals.push(principal);
+            }
+          });
+
           const showAll = req.query.showAll === 'true';
           const limit = 8;
           
           const limitedKnownFor = showAll ? (knownFor || []) : (knownFor || []).slice(0, limit);
           const limitedWrittenTitles = showAll ? writtenTitles : writtenTitles.slice(0, limit);
           const limitedDirectedTitles = showAll ? directedTitles : directedTitles.slice(0, limit);
+          const limitedPrincipalTitles = deduplicatedPrincipals;
 
           res.status(STATUS_CODE.OK).render("names/detail", {
             name: name,
@@ -121,13 +155,16 @@ exports.getName = (req, res, next) => {
             knownFor: limitedKnownFor,
             writtenTitles: limitedWrittenTitles,
             directedTitles: limitedDirectedTitles,
+            principalTitles: limitedPrincipalTitles,
             allKnownFor: knownFor || [],
             allWrittenTitles: writtenTitles || [],
             allDirectedTitles: directedTitles || [],
+            allPrincipalTitles: deduplicatedPrincipals || [],
             showAll: showAll,
             hasMoreKnownFor: (knownFor || []).length > limit,
             hasMoreWrittenTitles: writtenTitles.length > limit,
             hasMoreDirectedTitles: directedTitles.length > limit,
+            hasMorePrincipalTitles: false,
           });
         }
       );

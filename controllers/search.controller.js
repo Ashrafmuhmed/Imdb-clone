@@ -356,7 +356,7 @@ exports.advancedSearch = (req, res, next) => {
 
 exports.search = (req, res, next) => {
   const query = (req.query.q || "").trim();
-  const maxLimit = 1000;
+  const maxLimit = 100;
 
   if (!query) {
     return res.status(STATUS_CODE.OK).render("search/search", {
@@ -374,7 +374,7 @@ exports.search = (req, res, next) => {
   const escapedQuery = query.replace(/'/g, "''");
 
   const sqlQuery = `
-  SET pg_trgm.similarity_threshold = 0.3;
+  SET pg_trgm.similarity_threshold = 0.6;
   
   WITH q AS (
     SELECT 
@@ -395,7 +395,7 @@ exports.search = (req, res, next) => {
       (
         ts_rank(t.search_vector, q.tsq) * 3
         + similarity(t.primary_title, q.uq) * 2
-        + COALESCE((r.num_votes::float / 1000000.0) * r.average_rating, 0) * 1.5
+        + COALESCE(r.popularity_score, 0) * 1.5
       ) AS final_rank
     FROM "public"."title" t
     LEFT JOIN "public"."title_ratings" r ON r.tconst = t.tconst
@@ -417,6 +417,7 @@ exports.search = (req, res, next) => {
       (
         ts_rank(n.search_vector, q.tsq) * 1
         + similarity(n.primary_name, q.uq) * 0.7
+        + COALESCE(n.popularity_score, 0) * 0.5
       ) AS final_rank
     FROM "public"."names" n
     CROSS JOIN q

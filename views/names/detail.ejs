@@ -71,6 +71,61 @@
             </section>
             <% } %>
 
+            <% if (typeof principalTitles !== 'undefined' && principalTitles.length > 0) { %>
+            <section class="detail-section" id="appeared-in">
+                <h2>Appeared In</h2>
+                <div class="titles-grid">
+                    <% principalTitles.forEach(principal => { %>
+                        <% if (principal.title) { %>
+                        <div class="title-card">
+                            <a href="/titles/<%= principal.title.tconst %>" class="title-link">
+                                <div class="title-info">
+                                    <div class="title-header">
+                                        <h3 class="title-name"><%= principal.title.primary_title %></h3>
+                                        <div class="title-rating">
+                                            <% if (principal.title.rating && principal.title.rating.average_rating) { %>
+                                                <%= principal.title.rating.average_rating.toFixed(1) %> ⭐
+                                            <% } else { %>
+                                                N/A ⭐
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <% if (principal.category) { %>
+                                    <p class="principal-category-badge">
+                                        <%= principal.category %>
+                                    </p>
+                                    <% } %>
+                                    <% if (principal.characters) { %>
+                                    <p class="principal-character-info">
+                                        <%
+                                            let charDisplay = principal.characters;
+                                            try {
+                                                if (typeof principal.characters === 'string' && principal.characters.startsWith('[')) {
+                                                    const parsed = JSON.parse(principal.characters);
+                                                    charDisplay = Array.isArray(parsed) ? parsed.join(', ') : principal.characters;
+                                                }
+                                            } catch(e) {
+                                                charDisplay = principal.characters;
+                                            }
+                                        %>
+                                        <strong>"<%= charDisplay %>"</strong>
+                                    </p>
+                                    <% } %>
+                                    <p class="title-meta">
+                                        <%= principal.title.start_year || 'N/A' %>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        <% } %>
+                    <% }); %>
+                </div>
+                <% if (typeof hasMorePrincipalTitles !== 'undefined' && hasMorePrincipalTitles && !showAll) { %>
+                    <a href="?showAll=true#appeared-in" class="show-all-link">Show all appearances (<%= typeof allPrincipalTitles !== 'undefined' ? allPrincipalTitles.length : principalTitles.length %>)</a>
+                <% } %>
+            </section>
+            <% } %>
+
             <% if (typeof directedTitles !== 'undefined' && directedTitles.length > 0) { %>
             <section class="detail-section" id="directed">
                 <h2>Directed</h2>

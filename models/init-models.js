@@ -51,6 +51,24 @@ function initModels(sequelize) {
         otherKey: "tconst",
     });
 
+    title_principals.belongsTo(title, {
+        as: "title",
+        foreignKey: "tconst",
+    });
+    title.hasMany(title_principals, {
+        as: "principals_list",
+        foreignKey: "tconst",
+    });
+
+    title_principals.belongsTo(names, {
+        as: "name",
+        foreignKey: "nconst",
+    });
+    names.hasMany(title_principals, {
+        as: "principals_list",
+        foreignKey: "nconst",
+    });
+
 
     // Title - Title Crew 1-1
     title.hasOne(title_crew, {
