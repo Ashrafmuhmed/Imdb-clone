@@ -108,10 +108,14 @@
                 <h2>Cast & Crew</h2>
                 <div class="principals-list">
                     <% 
-                    // Group principals by category
+                    // Group principals by category and merge actor/actress into cast
                     const groupedPrincipals = {};
                     principals.forEach(p => {
-                        const cat = p.category || 'other';
+                        let cat = (p.title_principals && p.title_principals.category) || (p.category || 'other');
+                        // Merge actor and actress into cast
+                        if (cat === 'actor' || cat === 'actress') {
+                            cat = 'Cast';
+                        }
                         if (!groupedPrincipals[cat]) {
                             groupedPrincipals[cat] = [];
                         }
@@ -132,19 +136,21 @@
                                         </div>
                                         
                                         
-                                        <% if (principal.characters && principal.characters !== '\\N' && principal.characters !== null) { %>
+                                        <% const characters = principal.title_principals && principal.title_principals.characters ? principal.title_principals.characters : (principal.characters || null); %>
+                                        <% if (characters && characters !== '\\N' && characters !== null) { %>
                                             <div class="principal-character">
                                                 <span class="info-icon">🎭</span>
                                                 <span class="character-label">Character:</span>
-                                                <span class="character-name"><%= principal.characters %></span>
+                                                <span class="character-name"><%= characters %></span>
                                             </div>
                                         <% } %>
                                         
-                                        <% if (principal.job && principal.job !== '\\N' && principal.job !== null) { %>
+                                        <% const job = principal.title_principals && principal.title_principals.job ? principal.title_principals.job : (principal.job || null); %>
+                                        <% if (job && job !== '\\N' && job !== null) { %>
                                             <div class="principal-job">
                                                 <span class="info-icon">💼</span>
                                                 <span class="job-label">Job:</span>
-                                                <span class="job-name"><%= principal.job %></span>
+                                                <span class="job-name"><%= job %></span>
                                             </div>
                                         <% } %>
                                         

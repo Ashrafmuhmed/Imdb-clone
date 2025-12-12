@@ -374,75 +374,57 @@ exports.search = (req, res, next) => {
   const escapedQuery = query.replace(/'/g, "''");
 
   const sqlQuery = `
-    WITH q AS (
-      SELECT 
-        plainto_tsquery('simple', unaccent($1)) AS tsq,
-        unaccent($1) AS uq
-    )
-    SELECT * FROM (
-      SELECT 
-        'title' AS type,
-        t.tconst AS id,
-        t.primary_title AS text,
-        t.title_type,
-        t.start_year,
-        t.end_year,
-        t.runtime_minutes,
-        COALESCE(r.average_rating, 0) AS average_rating,
-        COALESCE(r.num_votes, 0) AS num_votes,
-        (
-          ts_rank(
-            COALESCE(
-              to_tsvector('simple', unaccent(COALESCE(t.primary_title, ''))),
-              to_tsvector('simple', '')
-            ),
-            q.tsq
-          ) * 3
-          + GREATEST(similarity(COALESCE(t.primary_title, ''), q.uq), 0) * 2
-          + COALESCE((r.num_votes::float / 1000000.0) * r.average_rating, 0) * 1.5
-        ) AS final_rank
-      FROM "public"."title" t
-      LEFT JOIN "public"."title_ratings" r ON r.tconst = t.tconst
-      CROSS JOIN q
-      WHERE 
-        (to_tsvector('simple', unaccent(COALESCE(t.primary_title, ''))) @@ q.tsq 
-        OR similarity(COALESCE(t.primary_title, ''), q.uq) > 0.3)
-        AND t.primary_title IS NOT NULL
-      
-      UNION ALL
-      
-      SELECT 
-        'name' AS type,
-        n.nconst AS id,
-        n.primary_name AS text,
-        NULL AS title_type,
-        n.birth_year AS start_year,
-        n.death_year AS end_year,
-        NULL AS runtime_minutes,
-        NULL AS average_rating,
-        NULL AS num_votes,
-        (
-          ts_rank(
-            COALESCE(
-              to_tsvector('simple', unaccent(COALESCE(n.primary_name, ''))),
-              to_tsvector('simple', '')
-            ),
-            q.tsq
-          ) * 1
-          + GREATEST(similarity(COALESCE(n.primary_name, ''), q.uq), 0) * 0.7
-        ) AS final_rank
-      FROM "public"."names" n
-      CROSS JOIN q
-      WHERE 
-        (to_tsvector('simple', unaccent(COALESCE(n.primary_name, ''))) @@ q.tsq 
-        OR similarity(COALESCE(n.primary_name, ''), q.uq) > 0.3)
-        AND n.primary_name IS NOT NULL
-    ) combined_results
-    WHERE final_rank > 0
-    ORDER BY final_rank DESC
-    LIMIT $2
-  `;
-
+  SET pg_trgm.similarity_threshold = 0.3;
+  
+  WITH q AS (
+    SELECT 
+      plainto_tsquery('simple', unaccent(?)) AS tsq,
+      unaccent(?) AS uq
+  )
+  SELECT * FROM (
+    SELECT 
+      'title' AS type,
+      t.tconst AS id,
+      t.primary_title AS text,
+      t.title_type,
+      t.start_year,
+      t.end_year,
+      t.runtime_minutes,
+      COALESCE(r.average_rating, 0) AS average_rating,
+      COALESCE(r.num_votes, 0) AS num_votes,
+      (
+        ts_rank(t.search_vector, q.tsq) * 3
+        + similarity(t.primary_title, q.uq) * 2
+        + COALESCE((r.num_votes::float / 1000000.0) * r.average_rating, 0) * 1.5
+      ) AS final_rank
+    FROM "public"."title" t
+    LEFT JOIN "public"."title_ratings" r ON r.tconst = t.tconst
+    CROSS JOIN q
+    WHERE t.search_vector @@ q.tsq OR t.primary_title % q.uq
+    
+    UNION ALL
+    
+    SELECT 
+      'name' AS type,
+      n.nconst AS id,
+      n.primary_name AS text,
+      NULL AS title_type,
+      n.birth_year AS start_year,
+      n.death_year AS end_year,
+      NULL AS runtime_minutes,
+      NULL AS average_rating,
+      NULL AS num_votes,
+      (
+        ts_rank(n.search_vector, q.tsq) * 1
+        + similarity(n.primary_name, q.uq) * 0.7
+      ) AS final_rank
+    FROM "public"."names" n
+    CROSS JOIN q
+    WHERE n.search_vector @@ q.tsq OR n.primary_name % q.uq
+  ) combined_results
+  ORDER BY final_rank DESC
+  LIMIT ?
+`;
   const formatFallbackResults = (titleRows, nameRows) => {
     const results = [];
 
@@ -481,7 +463,7 @@ exports.search = (req, res, next) => {
 
   sequelize
     .query(sqlQuery, {
-      replacements: [escapedQuery, maxLimit],
+      replacements: [escapedQuery, escapedQuery, maxLimit], // Note: escapedQuery appears twice
       type: Sequelize.QueryTypes.SELECT,
     })
     .catch((sqlErr) => {
@@ -529,17 +511,21 @@ exports.search = (req, res, next) => {
           order: [["primary_name", "ASC"]],
           raw: false,
         }),
-      ]).then(([titleRows, nameRows]) => formatFallbackResults(titleRows, nameRows));
+      ]).then(([titleRows, nameRows]) =>
+        formatFallbackResults(titleRows, nameRows)
+      );
     })
     .then((results) => {
       const validResults = Array.isArray(results) ? results : [];
-      const titles = [];
-      const names = [];
+      const mixedResults = [];
+      const titleIndexMap = new Map();
 
-      validResults.forEach((row) => {
+      validResults.forEach((row, index) => {
         if (row.type === "title") {
-          titles.push({
+          const resultItem = {
+            type: "title",
             tconst: row.id,
+            id: row.id,
             primaryTitle: row.text,
             title_type: row.title_type,
             startYear: row.start_year,
@@ -547,34 +533,39 @@ exports.search = (req, res, next) => {
             runtimeMinutes: row.runtime_minutes,
             averageRating: row.average_rating || 0,
             numVotes: row.num_votes || 0,
-          });
+            genres: [],
+          };
+          titleIndexMap.set(row.id, index);
+          mixedResults.push(resultItem);
         } else if (row.type === "name") {
-          names.push({
+          mixedResults.push({
+            type: "name",
             nconst: row.id,
+            id: row.id,
             name: row.text,
             birthYear: row.start_year,
             deathYear: row.end_year,
+            popularityScore: row.popularity_score || 0,
           });
         }
       });
 
-      if (titles.length === 0) {
-        return Promise.resolve({ titles, names });
+      if (titleIndexMap.size === 0) {
+        return Promise.resolve(mixedResults);
       }
 
-      const tconsts = titles.map((t) => t.tconst);
+      const tconsts = Array.from(titleIndexMap.keys());
       return fetchGenresForTitles(tconsts).then((genreMap) => {
-        titles.forEach((title) => {
-          title.genres = genreMap[title.tconst] || [];
+        titleIndexMap.forEach((index, tconst) => {
+          mixedResults[index].genres = genreMap[tconst] || [];
         });
-        return { titles, names };
+        return mixedResults;
       });
     })
-    .then(({ titles, names }) => {
+    .then((mixedResults) => {
       res.status(STATUS_CODE.OK).render("search/search", {
         query: query,
-        titles: titles,
-        names: names,
+        results: mixedResults,
         pagination: {
           page: 1,
           hasNext: false,
@@ -585,10 +576,6 @@ exports.search = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.error("search error", {
-        message: err?.message,
-        sql: err?.sql,
-      });
       next(err);
     });
 };

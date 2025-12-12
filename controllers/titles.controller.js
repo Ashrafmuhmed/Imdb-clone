@@ -44,6 +44,10 @@ exports.getTitleDetails = (req, res, next) => {
             {
                 model: Names,
                 as: "principals",
+                through: {
+                    attributes: ["job", "characters", "category", "ordering"]
+                },
+                attributes: ["nconst", "primary_name"],
             },
             {
                 model: TitleCrew,
@@ -56,6 +60,7 @@ exports.getTitleDetails = (req, res, next) => {
             {
                 model: TitleEpisode,
                 as: "episodes",
+                separate: true,
                 order: [
                     ["season_number", "ASC"],
                     ["episode_number", "ASC"],
