@@ -178,10 +178,16 @@
                     <div class="episode-card">
                         <div class="episode-header">
                             <div class="episode-number">S<%= episode.season_number %>E<%= episode.episode_number %></div>
-                            <div class="episode-info">
+                            <a href="/titles/<%= episode.episode_title.tconst %>" class="episode-link">
+                            <% if( episode.episode_title.primary_title ) { %> 
+                            <div class="episode-title"><%= episode.episode_title.primary_title %></div>
+                            <% } else { %>
+                                <div class="episode-info">
                                 <h3>Episode <%= episode.episode_number %></h3>
                                 <p class="episode-season">Season <%= episode.season_number %></p>
                             </div>
+                            <% } %>
+                            </a>
                         </div>
                     </div>
                     <% }); %>

@@ -79,6 +79,13 @@ exports.getTitleDetails = (req, res, next) => {
                     ["season_number", "ASC"],
                     ["episode_number", "ASC"],
                 ],
+                include: [
+                    {
+                        model: Titles,
+                        as : "episode_title"
+                    }
+                ],  
+
             },
         ],
     }).then((title) => {
@@ -110,7 +117,7 @@ exports.getTitleDetails = (req, res, next) => {
                     
                     const showAll = req.query.showAll === 'true';
                     const limit = 8;
-                    
+                    console.log(title.episodes[0]);
                     const limitedDirectors = showAll ? directors : directors.slice(0, limit);
                     const limitedWriters = showAll ? writters : writters.slice(0, limit);
                     const limitedPrincipals = showAll ? (title.principals || []) : (title.principals || []).slice(0, limit);

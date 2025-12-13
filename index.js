@@ -108,7 +108,7 @@ app.use( (error,req,res,next) => {
     pageTitle: 'Internal Server Error',
     statusCode: 500,
     message: error.message || 'Internal Server Error',
-    description: 'An error occurred while processing your request.',
+    description: error.description || 'An unexpected error occurred.',
   });
 });
 
