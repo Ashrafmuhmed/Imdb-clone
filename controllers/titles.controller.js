@@ -1,6 +1,7 @@
 const Op = require("sequelize").Op;
 const STATUS_CODE = require("../utils/status_code");
 const models = require("../models");
+const sequelize = require("../utils/database");
 
 const Titles = models.title;
 const TitleRatings = models.title_ratings;
@@ -10,26 +11,39 @@ const TitlePrincipals = models.title_principals;
 const Names = models.names;
 const Genre = models.genre;
 
-exports.getHomePage = (req, res, next) => {
-    Titles.findAll({
-        limit: 12,
-        include: [
-            {
-                model: TitleRatings,
-                as: "rating",
-                where: {
-                    num_votes: {
-                        [Op.gte]: 1000,
-                    },
-                },
-            },
-        ],
-        order: [["rating", "average_rating", "DESC"]],
-    }).then((data) => {
-        return res.status(STATUS_CODE.OK).render("home/index", {
-            title: data,
+// Helper function to fetch data from materialized views
+const fetchMaterializedView = (viewName, limit = 8) => {
+    const query = `
+        SELECT * FROM ${viewName}
+        LIMIT :limit
+    `;
+    return sequelize.query(query, {
+        replacements: { limit },
+        type: sequelize.QueryTypes.SELECT
+    })
+        .then((data) => data)
+        .catch((error) => {
+            console.error(`Error fetching from ${viewName}:`, error);
+            return [];
         });
-    });
+};
+
+exports.getHomePage = (req, res, next) => {
+    Promise.all([
+        fetchMaterializedView('mv_top_250_movies', 8),
+        fetchMaterializedView('mv_top_250_series', 8),
+        fetchMaterializedView('mv_top_250_episodes', 8)
+    ])
+        .then(([topMovies, topSeries, topEpisodes]) => {
+            return res.status(STATUS_CODE.OK).render("home/index", {
+                topMovies: topMovies,
+                topSeries: topSeries,
+                topEpisodes: topEpisodes,
+            });
+        })
+        .catch((error) => {
+            next(error);
+        });
 };
 
 exports.getTitleDetails = (req, res, next) => {
@@ -100,7 +114,6 @@ exports.getTitleDetails = (req, res, next) => {
                     const limitedDirectors = showAll ? directors : directors.slice(0, limit);
                     const limitedWriters = showAll ? writters : writters.slice(0, limit);
                     const limitedPrincipals = showAll ? (title.principals || []) : (title.principals || []).slice(0, limit);
-                    
                     res.status(STATUS_CODE.OK).render("titles/detail", {
                         title: title,
                         directors: limitedDirectors,
@@ -200,5 +213,127 @@ exports.getTitles = (req, res, next) => {
         })
         .catch((err) => {
             next(err);
+        });
+};
+exports.getTop250Movies = (req, res, next) => {
+    const pg = req.query.pg ? +req.query.pg : 1;
+    const itemsPerPage = 20;
+    const offset = (pg - 1) * itemsPerPage;
+
+    const dataQuery = `
+        SELECT * FROM mv_top_250_movies
+        LIMIT :limit OFFSET :offset
+    `;
+    
+    const countQuery = `
+        SELECT COUNT(*) as total FROM mv_top_250_movies
+    `;
+
+    Promise.all([
+        sequelize.query(dataQuery, {
+            replacements: { limit: itemsPerPage, offset: offset },
+            type: sequelize.QueryTypes.SELECT
+        }),
+        sequelize.query(countQuery, {
+            type: sequelize.QueryTypes.SELECT
+        })
+    ])
+        .then(([data, countResult]) => {
+            const total = parseInt(countResult[0].total);
+            const totalPages = Math.ceil(total / itemsPerPage);
+
+            return res.status(STATUS_CODE.OK).render("titles/materialized-list", {
+                titles: data,
+                currentPage: pg,
+                total: total,
+                totalPages: totalPages,
+                viewName: "Top 250 Movies",
+                viewType: "movies"
+            });
+        })
+        .catch((error) => {
+            next(error);
+        });
+};
+
+exports.getTop250Series = (req, res, next) => {
+    const pg = req.query.pg ? +req.query.pg : 1;
+    const itemsPerPage = 20;
+    const offset = (pg - 1) * itemsPerPage;
+
+    const dataQuery = `
+        SELECT * FROM mv_top_250_series
+        LIMIT :limit OFFSET :offset
+    `;
+    
+    const countQuery = `
+        SELECT COUNT(*) as total FROM mv_top_250_series
+    `;
+
+    Promise.all([
+        sequelize.query(dataQuery, {
+            replacements: { limit: itemsPerPage, offset: offset },
+            type: sequelize.QueryTypes.SELECT
+        }),
+        sequelize.query(countQuery, {
+            type: sequelize.QueryTypes.SELECT
+        })
+    ])
+        .then(([data, countResult]) => {
+            const total = parseInt(countResult[0].total);
+            const totalPages = Math.ceil(total / itemsPerPage);
+
+            return res.status(STATUS_CODE.OK).render("titles/materialized-list", {
+                titles: data,
+                currentPage: pg,
+                total: total,
+                totalPages: totalPages,
+                viewName: "Top 250 Series",
+                viewType: "series"
+            });
+        })
+        .catch((error) => {
+            next(error);
+        });
+};
+
+exports.getTopEpisodes = (req, res, next) => {
+    const pg = req.query.pg ? +req.query.pg : 1;
+    const itemsPerPage = 20;
+    const offset = (pg - 1) * itemsPerPage;
+
+    const dataQuery = `
+        SELECT * FROM mv_top_250_episodes
+        LIMIT :limit OFFSET :offset
+    `;
+    
+    const countQuery = `
+        SELECT COUNT(*) as total FROM mv_top_250_episodes
+    `;
+
+    Promise.all([
+        sequelize.query(dataQuery, {
+            replacements: { limit: itemsPerPage, offset: offset },
+            type: sequelize.QueryTypes.SELECT
+        }),
+        sequelize.query(countQuery, {
+            type: sequelize.QueryTypes.SELECT
+        })
+    ])
+        .then(([data, countResult]) => {
+            const total = parseInt(countResult[0].total);
+            const totalPages = Math.ceil(total / itemsPerPage);
+
+            return res.status(STATUS_CODE.OK).render("titles/materialized-list", {
+                titles: data,
+                currentPage: pg,
+                total: total,
+                totalPages: totalPages,
+                viewName: "Top Episodes",
+                viewType: "episodes"
+            });
+        })
+        .catch((error) => {
+            next(error);
         });
 };

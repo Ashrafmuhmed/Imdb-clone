@@ -1,0 +1,78 @@
+<%- include('../includes/head.ejs', { pageTitle: viewName + ' - IMDB Clone',
+showNav: true, isLoggedIn: typeof isLoggedIn !== 'undefined' ? isLoggedIn :
+false, user: typeof user !== 'undefined' ? user : null }) %>
+
+<main class="titles-container">
+  <div class="container">
+    <div class="titles-header">
+      <h1><%= viewName %></h1>
+      <p class="results-count">Total: <%= total %> titles</p>
+    </div>
+
+    <% if (titles && titles.length > 0) { %>
+    <div class="titles-grid">
+      <% titles.forEach((title, index) => { %>
+      <div class="title-card">
+        <a href="/titles/<%= title.tconst %>" class="title-link">
+          <div class="title-info">
+            <div class="title-header">
+                <% if(viewType === 'episodes') { %>
+                <h3 class="title-name"><%= title.episode_title %></h3>
+                <% } else { %>
+              <h3 class="title-name"><%= title.primary_title %></h3>
+                <% } %>
+              <div class="title-rating">
+                <%= title.average_rating ? title.average_rating.toFixed(1) :
+                'N/A' %> ⭐
+              </div>
+            </div>
+            <p class="title-meta">
+            <% if(  viewType === 'episodes') { %>
+                <%= title.series_title || 'N/A' %> •
+            <% } else { %>
+                <%= title.start_year || 'N/A' %>
+            <% } %> 
+            <% if (viewType === 'episodes') { %> 
+                 • S<%= title.season_number %>E<%= title.episode_number %> 
+            <% } else if(viewType === 'series') { %>
+               
+                <% } else { %> • <%=title.runtime_minutes || 'N/A' %> min <% } %>
+            </p>
+            <p class="title-votes">
+              <% if (title.num_votes) { %> <%= title.num_votes.toLocaleString()
+              %> votes <% } else { %> N/A votes <% } %>
+            </p>
+          </div>
+        </a>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+      <a href="?pg=1" class="pagination-link">First</a>
+      <a href="?pg=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+      <% } %> <% const maxPages = 5; let startPage = Math.max(1, currentPage -
+      Math.floor(maxPages / 2)); let endPage = Math.min(totalPages, startPage +
+      maxPages - 1); if (endPage - startPage < maxPages - 1) { startPage =
+      Math.max(1, endPage - maxPages + 1); } %> <% for (let i = startPage; i <=
+      endPage; i++) { %> <% if (i === currentPage) { %>
+      <span class="pagination-current"><%= i %></span>
+      <% } else { %>
+      <a href="?pg=<%= i %>" class="pagination-link"><%= i %></a>
+      <% } %> <% } %> <% if (currentPage < totalPages) { %>
+      <a href="?pg=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+      <a href="?pg=<%= totalPages %>" class="pagination-link">Last</a>
+      <% } %>
+    </div>
+    <% } %> <% } else { %>
+    <div class="no-results">
+      <p>No titles found.</p>
+    </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include('../includes/end.ejs') %>

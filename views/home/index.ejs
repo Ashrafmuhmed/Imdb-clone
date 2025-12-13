@@ -47,29 +47,91 @@
         </div>
     </section>
 
-    <% if (typeof title !== 'undefined' && title.length > 0) { %>
-    <section class="featured-titles">
+    <!-- Top 250 Movies Section -->
+    <% if (typeof topMovies !== 'undefined' && topMovies.length > 0) { %>
+    <section class="materialized-view-section">
         <div class="container">
-            <h2 class="section-title">Featured Titles</h2>
+            <div class="section-header">
+                <h2 class="section-title">🏆 Top 250 Movies</h2>
+                <a href="/top-250-movies" class="view-all-link">View All Top 250 Movies →</a>
+            </div>
             <div class="titles-grid">
-                <% title.forEach(title => { %>
+                <% topMovies.forEach(title => { %>
                 <div class="title-card">
                     <a href="/titles/<%= title.tconst %>" class="title-link">
                         <div class="title-info">
                             <div class="title-header">
                                 <h3 class="title-name"><%= title.primary_title %></h3>
                                 <div class="title-rating">
-                                    <% if (title.rating && title.rating.average_rating) { %>
-                                        <%= title.rating.average_rating.toFixed(1) %> ⭐
-                                    <% } else { %>
-                                        N/A ⭐
-                                    <% } %>
+                                    <%= title.average_rating ? title.average_rating.toFixed(1) : 'N/A' %> ⭐
                                 </div>
                             </div>
                             <p class="title-meta">
-                                <%= title.start_year || 'N/A' %> • 
-                                <%= title.runtime_minutes || 'N/A' %> min • 
-                                <%= title.title_type || 'N/A' %>
+                                <%= title.start_year || 'N/A' %> •
+                                <%= title.runtime_minutes || 'N/A' %> min
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- Top 250 TV Series Section -->
+    <% if (typeof topSeries !== 'undefined' && topSeries.length > 0) { %>
+    <section class="materialized-view-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">📺 Top 250 TV Series</h2>
+                <a href="/top-250-series" class="view-all-link">View All Top 250 Series →</a>
+            </div>
+            <div class="titles-grid">
+                <% topSeries.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.primary_title %></h3>
+                                <div class="title-rating">
+                                    <%= title.average_rating ? title.average_rating.toFixed(1) : 'N/A' %> ⭐
+                                </div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.start_year || 'N/A' %> 
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- Top Episodes Section -->
+    <% if (typeof topEpisodes !== 'undefined' && topEpisodes.length > 0) { %>
+    <section class="materialized-view-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">⭐ Top Episodes</h2>
+                <a href="/top-episodes" class="view-all-link">View All Top Episodes →</a>
+            </div>
+            <div class="titles-grid">
+                <% topEpisodes.forEach(title => { %>
+                <div class="title-card">
+                    <a href="/titles/<%= title.tconst %>" class="title-link">
+                        <div class="title-info">
+                            <div class="title-header">
+                                <h3 class="title-name"><%= title.episode_title %></h3>
+                                <div class="title-rating">
+                                    <%= title.average_rating ? title.average_rating.toFixed(1) : 'N/A' %> ⭐
+                                </div>
+                            </div>
+                            <p class="title-meta">
+                                <%= title.series_title || 'N/A' %> •
+                                S<%= title.season_number %>E<%= title.episode_number %>
                             </p>
                         </div>
                     </a>
@@ -82,4 +144,3 @@
 </main>
 
 <%- include('../includes/end.ejs') %>
-
