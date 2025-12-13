@@ -87,6 +87,12 @@ exports.getTitleDetails = (req, res, next) => {
                 ],  
 
             },
+            {
+                model: TitleEpisode,
+                as: "episode_info",
+                attributes: ["parent_tconst"],
+                required: false,
+            },
         ],
     }).then((title) => {
         if (!title) {
@@ -136,6 +142,7 @@ exports.getTitleDetails = (req, res, next) => {
                         hasMoreDirectors: directors.length > limit,
                         hasMoreWriters: writters.length > limit,
                         hasMorePrincipals: (title.principals || []).length > limit,
+                        parentTconst: title.episode_info.parent_tconst || null,
                     });
                 }
             );

@@ -83,7 +83,6 @@ app.use((req,res,next) => {
       if( !user ){
         return next() ;
       }
-      console.log("User loaded from session:", user);
       req.user = user ;
       next() ;
     } )

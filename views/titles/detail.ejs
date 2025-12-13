@@ -8,6 +8,11 @@
 <main class="title-detail-container">
     <div class="container">
         <% if (typeof title !== 'undefined') { %>
+        <% if (typeof parentTconst !== 'undefined' && parentTconst) { %>
+            <div class="episode-parent-navigation">
+                <a href="/titles/<%= parentTconst %>" class="back-to-series-link">← Back to Series</a>
+            </div>
+        <% } %>
         <div class="title-detail-header">
             <div class="title-detail-info">
                 <h1 class="title-detail-name"><%= title.primary_title %></h1>
