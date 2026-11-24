@@ -12,7 +12,13 @@
     "url": "git+https://github.com/Ashrafmuhmed/Imdb-clone.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Mohamed Ashraf, Ashraf Mohamed, Mohamed Khaled, Ahmed Sakr",
+  "contributors": [
+    "Mohamed Ashraf",
+    "Ashraf Mohamed",
+    "Mohamed Khaled",
+    "Ahmed Sakr"
+  ],
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
